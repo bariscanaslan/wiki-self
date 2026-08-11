@@ -5,15 +5,15 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Spinner } from "@/components/ui/Spinner";
 import { extractErrorMessage } from "@/lib/api/client";
-import { useDeleteUser, useSetUserActive, useUsers } from "@/lib/api/users";
+import { useSetUserActive, useUsers } from "@/lib/api/users";
 import { useAuth } from "@/lib/auth/AuthContext";
 import type { UserResponse } from "@/lib/types";
 import { AssignUserGroupsModal } from "./AssignUserGroupsModal";
 import { CreateUserModal } from "./CreateUserModal";
+import { DeleteUserModal } from "./DeleteUserModal";
 import { EditUserModal } from "./EditUserModal";
 import { ResetPasswordModal } from "./ResetPasswordModal";
 
@@ -21,7 +21,6 @@ export function UsersTable() {
   const { user: currentUser } = useAuth();
   const { data: users, isLoading } = useUsers();
   const setUserActive = useSetUserActive();
-  const deleteUser = useDeleteUser();
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editUser, setEditUser] = useState<UserResponse | null>(null);
@@ -32,20 +31,6 @@ export function UsersTable() {
   async function toggleActive(targetUser: UserResponse) {
     try {
       await setUserActive.mutateAsync({ id: targetUser.id, request: { isActive: !targetUser.isActive } });
-    } catch (error) {
-      toast.error(extractErrorMessage(error));
-    }
-  }
-
-  async function handleDelete() {
-    if (!deleteTarget) {
-      return;
-    }
-
-    try {
-      await deleteUser.mutateAsync(deleteTarget.id);
-      toast.success("Kullanıcı silindi");
-      setDeleteTarget(null);
     } catch (error) {
       toast.error(extractErrorMessage(error));
     }
@@ -131,15 +116,7 @@ export function UsersTable() {
       <EditUserModal user={editUser} onClose={() => setEditUser(null)} />
       <AssignUserGroupsModal user={groupsUser} onClose={() => setGroupsUser(null)} />
       <ResetPasswordModal user={resetPasswordUser} onClose={() => setResetPasswordUser(null)} />
-      <ConfirmDialog
-        isOpen={Boolean(deleteTarget)}
-        title="Kullanıcıyı sil"
-        description={`"${deleteTarget?.displayName ?? ""}" adlı kullanıcıyı silmek istediğinize emin misiniz?`}
-        confirmLabel="Sil"
-        isLoading={deleteUser.isPending}
-        onConfirm={handleDelete}
-        onCancel={() => setDeleteTarget(null)}
-      />
+      <DeleteUserModal user={deleteTarget} onClose={() => setDeleteTarget(null)} />
     </div>
   );
 }

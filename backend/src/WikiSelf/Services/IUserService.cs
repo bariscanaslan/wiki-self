@@ -11,5 +11,5 @@ public interface IUserService
     Task SetActiveAsync(Guid id, SetUserActiveRequest request);
     Task<UserResponse> AssignGroupsAsync(Guid id, AssignUserGroupsRequest request);
     Task ResetPasswordAsync(Guid id, AdminResetPasswordRequest request);
-    Task DeleteAsync(Guid id);
+    Task DeleteAsync(Guid id, Guid actingUserId, DeleteUserRequest request);
 }

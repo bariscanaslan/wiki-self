@@ -11,10 +11,12 @@ namespace WikiSelf.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly ICurrentUserService _currentUser;
 
-    public UsersController(IUserService userService)
+    public UsersController(IUserService userService, ICurrentUserService currentUser)
     {
         _userService = userService;
+        _currentUser = currentUser;
     }
 
     [HttpGet]
@@ -63,9 +65,9 @@ public class UsersController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id, DeleteUserRequest request)
     {
-        await _userService.DeleteAsync(id);
+        await _userService.DeleteAsync(id, _currentUser.UserId, request);
         return NoContent();
     }
 }

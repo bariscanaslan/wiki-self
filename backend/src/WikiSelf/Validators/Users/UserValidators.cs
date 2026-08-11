@@ -36,3 +36,11 @@ public class AdminResetPasswordRequestValidator : AbstractValidator<AdminResetPa
         RuleFor(x => x.NewPassword).NotEmpty().MinimumLength(8);
     }
 }
+
+public class DeleteUserRequestValidator : AbstractValidator<DeleteUserRequest>
+{
+    public DeleteUserRequestValidator()
+    {
+        RuleFor(x => x.Password).NotEmpty();
+    }
+}

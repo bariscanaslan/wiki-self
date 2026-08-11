@@ -5,6 +5,7 @@ import type {
   AdminResetPasswordRequest,
   AssignUserGroupsRequest,
   CreateUserRequest,
+  DeleteUserRequest,
   SetUserActiveRequest,
   UpdateUserRequest,
   UserResponse,
@@ -38,8 +39,8 @@ async function resetUserPassword(id: string, request: AdminResetPasswordRequest)
   await apiClient.post(`/users/${id}/reset-password`, request);
 }
 
-async function deleteUser(id: string): Promise<void> {
-  await apiClient.delete(`/users/${id}`);
+async function deleteUser(id: string, request: DeleteUserRequest): Promise<void> {
+  await apiClient.delete(`/users/${id}`, { data: request });
 }
 
 export function useUsers() {
@@ -90,7 +91,7 @@ export function useResetUserPassword() {
 export function useDeleteUser() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteUser,
+    mutationFn: ({ id, request }: { id: string; request: DeleteUserRequest }) => deleteUser(id, request),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.users }),
   });
 }

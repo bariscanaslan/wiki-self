@@ -12,6 +12,8 @@ namespace WikiSelf.Services;
 
 public class DocumentService : IDocumentService
 {
+    private const int MaxRetainedVersions = 5;
+
     private readonly AppDbContext _db;
     private readonly IAuditService _auditService;
     private readonly IPermissionService _permissionService;
@@ -29,6 +31,25 @@ public class DocumentService : IDocumentService
             .Include(d => d.CurrentVersion)
             .Include(d => d.CreatedByUser)
             .Include(d => d.DocumentTags).ThenInclude(dt => dt.Tag);
+    }
+
+    private async Task PruneOldVersionsAsync(Guid documentId)
+    {
+        var staleVersionIds = await _db.DocumentVersions
+            .Where(v => v.DocumentId == documentId)
+            .OrderByDescending(v => v.VersionNumber)
+            .Skip(MaxRetainedVersions)
+            .Select(v => v.Id)
+            .ToListAsync();
+
+        if (staleVersionIds.Count == 0)
+        {
+            return;
+        }
+
+        await _db.DocumentVersions
+            .Where(v => staleVersionIds.Contains(v.Id))
+            .ExecuteDeleteAsync();
     }
 
     private async Task<DocumentResponse> ToResponseAsync(Document document, Guid userId)
@@ -155,6 +176,7 @@ public class DocumentService : IDocumentService
         document.SearchContent = request.ContentMarkdown;
 
         await _db.SaveChangesAsync();
+        await PruneOldVersionsAsync(documentId);
         await _auditService.LogAsync(userId, AuditAction.Update, ResourceType.Document, documentId, version.Id);
 
         var updated = await WithIncludes(_db.Documents.AsNoTracking()).FirstAsync(d => d.Id == documentId);
@@ -228,6 +250,7 @@ public class DocumentService : IDocumentService
         document.SearchContent = targetVersion.ContentMarkdown;
 
         await _db.SaveChangesAsync();
+        await PruneOldVersionsAsync(documentId);
         await _auditService.LogAsync(
             userId,
             AuditAction.Update,
@@ -304,6 +327,12 @@ public class DocumentService : IDocumentService
     {
         var document = await _db.Documents.FirstOrDefaultAsync(d => d.Id == documentId)
                         ?? throw new NotFoundException("Document not found.");
+
+        // Audit log entries reference documents loosely (ResourceId, no foreign key), so they never
+        // blocked deletion — but clear them out too, so no dangling history points at a deleted document.
+        await _db.AuditLogs
+            .Where(a => a.ResourceType == ResourceType.Document && a.ResourceId == documentId)
+            .ExecuteDeleteAsync();
 
         _db.Documents.Remove(document);
         await _db.SaveChangesAsync();

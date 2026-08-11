@@ -33,3 +33,7 @@ export interface AssignUserGroupsRequest {
 export interface AdminResetPasswordRequest {
   newPassword: string;
 }
+
+export interface DeleteUserRequest {
+  password: string;
+}

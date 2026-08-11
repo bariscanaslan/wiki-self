@@ -21,4 +21,6 @@ public record AssignUserGroupsRequest(IReadOnlyList<Guid> GroupIds);
 
 public record AdminResetPasswordRequest(string NewPassword);
 
+public record DeleteUserRequest(string Password);
+
 public record UserSummaryResponse(Guid Id, string Email, string DisplayName);

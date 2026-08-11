@@ -2,14 +2,15 @@
 
 import axios from "axios";
 import { motion } from "framer-motion";
-import { AlertTriangle, History, Lock, Pencil, Save } from "lucide-react";
-import { notFound } from "next/navigation";
+import { AlertTriangle, History, Lock, Pencil, Save, Trash2 } from "lucide-react";
+import { notFound, useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../lib/api/client";
-import { useDocument, useSaveDocument } from "../../lib/api/documents";
-import { canEdit } from "../../lib/auth/permissions";
+import { useDeleteDocument, useDocument, useSaveDocument } from "../../lib/api/documents";
+import { canEdit, canManage } from "../../lib/auth/permissions";
 import { Button } from "../ui/Button";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { EmptyState } from "../ui/EmptyState";
 import { FullPageSpinner } from "../ui/Spinner";
 import { CategorySelect } from "./CategorySelect";
@@ -20,12 +21,15 @@ import { TagPicker } from "./TagPicker";
 import { VersionHistoryModal } from "./VersionHistoryModal";
 
 export function DocumentPage({ documentId }: { documentId: string }) {
+  const router = useRouter();
   const { data: document, isLoading, isError, error } = useDocument(documentId);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("");
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const editorRef = useRef<DocumentEditorHandle>(null);
   const saveDocument = useSaveDocument();
+  const deleteDocument = useDeleteDocument();
 
   if (isLoading) {
     return <FullPageSpinner />;
@@ -62,10 +66,21 @@ export function DocumentPage({ documentId }: { documentId: string }) {
   }
 
   const editable = canEdit(document.effectivePermission);
+  const manageable = canManage(document.effectivePermission);
 
   function startEditing() {
     setTitle(document!.title);
     setIsEditing(true);
+  }
+
+  async function handleDelete() {
+    try {
+      await deleteDocument.mutateAsync(documentId);
+      toast.success("Doküman silindi");
+      router.push("/");
+    } catch (error) {
+      toast.error(extractErrorMessage(error));
+    }
   }
 
   async function handleSave() {
@@ -127,6 +142,11 @@ export function DocumentPage({ documentId }: { documentId: string }) {
               )}
             </>
           )}
+          {manageable && !isEditing && (
+            <Button variant="ghost" onClick={() => setIsDeleteOpen(true)} aria-label="Dokümanı sil">
+              <Trash2 size={16} className="text-red-500" />
+            </Button>
+          )}
         </div>
       </div>
 
@@ -151,6 +171,16 @@ export function DocumentPage({ documentId }: { documentId: string }) {
         documentId={documentId}
         currentVersionNumber={document.versionNumber}
         editable={editable}
+      />
+
+      <ConfirmDialog
+        isOpen={isDeleteOpen}
+        title="Dokümanı sil"
+        description={`"${document.title}" adlı dokümanı silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`}
+        confirmLabel="Sil"
+        isLoading={deleteDocument.isPending}
+        onConfirm={handleDelete}
+        onCancel={() => setIsDeleteOpen(false)}
       />
     </div>
   );
