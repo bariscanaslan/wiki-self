@@ -131,4 +131,15 @@ public class AuthService : IAuthService
 
         return ToUserResponse(user);
     }
+
+    public async Task VerifyPasswordAsync(Guid userId, VerifyPasswordRequest request)
+    {
+        var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId)
+            ?? throw new NotFoundException("User not found.");
+
+        if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+        {
+            throw new UnauthorizedAppException("Invalid password.");
+        }
+    }
 }

@@ -20,8 +20,12 @@ public class SearchController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<SearchResponse>> Search([FromQuery] string q, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+    public async Task<ActionResult<SearchResponse>> Search(
+        [FromQuery] string? q = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        [FromQuery] Guid? categoryId = null)
     {
-        return Ok(await _searchService.SearchAsync(_currentUser.UserId, q, page, pageSize));
+        return Ok(await _searchService.SearchAsync(_currentUser.UserId, q ?? string.Empty, page, pageSize, categoryId));
     }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { FolderPlus } from "lucide-react";
+import { FolderPlus, PackageOpen } from "lucide-react";
 import { useFolderTree } from "../../lib/api/folders";
 import { useAuth } from "../../lib/auth/AuthContext";
 import { EmptyState } from "../ui/EmptyState";
@@ -10,6 +10,7 @@ import { FolderTreeUIProvider, useFolderTreeUI } from "./FolderTreeUIContext";
 import { CreateDocumentModal } from "./modals/CreateDocumentModal";
 import { CreateFolderModal } from "./modals/CreateFolderModal";
 import { DeleteFolderDialog } from "./modals/DeleteFolderDialog";
+import { ExportAllModal } from "./modals/ExportAllModal";
 import { MoveFolderModal } from "./modals/MoveFolderModal";
 import { RenameFolderModal } from "./modals/RenameFolderModal";
 
@@ -46,6 +47,16 @@ function FolderTreeInner() {
         <FolderNode key={node.id} node={node} depth={0} />
       ))}
 
+      {!isLoading && tree && tree.length > 0 && (
+        <button
+          type="button"
+          onClick={() => openModal({ type: "exportAll" })}
+          className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-200 px-2 py-2 text-xs font-medium text-zinc-500 transition-colors hover:border-primary-300 hover:bg-zinc-50 hover:text-primary-700"
+        >
+          <PackageOpen size={14} /> Tümünü Dışa Aktar
+        </button>
+      )}
+
       <CreateFolderModal isOpen={modal?.type === "createFolder"} parent={modal?.type === "createFolder" ? modal.parent : null} onClose={closeModal} />
       <CreateDocumentModal
         isOpen={modal?.type === "createDocument"}
@@ -60,6 +71,7 @@ function FolderTreeInner() {
         tree={tree ?? []}
       />
       <DeleteFolderDialog isOpen={modal?.type === "delete"} folder={modal?.type === "delete" ? modal.folder : null} onClose={closeModal} />
+      <ExportAllModal isOpen={modal?.type === "exportAll"} onClose={closeModal} />
     </div>
   );
 }

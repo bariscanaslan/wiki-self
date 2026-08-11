@@ -11,3 +11,5 @@ public record RefreshTokenRequest(string RefreshToken);
 public record RefreshTokenResponse(string AccessToken, string RefreshToken, DateTime AccessTokenExpiresAt);
 
 public record LogoutRequest(string RefreshToken);
+
+public record VerifyPasswordRequest(string Password);

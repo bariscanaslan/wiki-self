@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { apiClient } from "./client";
 import { queryKeys } from "./queryKeys";
 import type {
@@ -77,6 +78,12 @@ export function useDocument(id: string | undefined) {
     queryKey: queryKeys.document(id ?? ""),
     queryFn: () => getDocument(id as string),
     enabled: Boolean(id),
+    retry: (failureCount, error) => {
+      if (axios.isAxiosError(error) && error.response && error.response.status < 500) {
+        return false;
+      }
+      return failureCount < 1;
+    },
   });
 }
 

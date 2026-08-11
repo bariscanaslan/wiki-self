@@ -7,6 +7,7 @@ import { Suspense } from "react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Spinner } from "@/components/ui/Spinner";
+import { useCategories } from "@/lib/api/categories";
 import { useSearch } from "@/lib/api/search";
 
 const PAGE_SIZE = 20;
@@ -15,9 +16,13 @@ function SearchResultsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get("q") ?? "";
+  const categoryId = searchParams.get("categoryId") ?? undefined;
   const page = Number(searchParams.get("page") ?? "1");
 
-  const { data, isLoading, isFetching } = useSearch(query, page, PAGE_SIZE);
+  const { data: categories } = useCategories();
+  const categoryName = categoryId ? categories?.find((category) => category.id === categoryId)?.name : undefined;
+
+  const { data, isLoading, isFetching } = useSearch(query, page, PAGE_SIZE, categoryId);
 
   function goToPage(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -29,12 +34,14 @@ function SearchResultsContent() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
-      <h1 className="mb-1 text-xl font-bold text-zinc-900">Arama Sonuçları</h1>
+      <h1 className="mb-1 text-xl font-bold text-zinc-900">{categoryId && !query ? `${categoryName ?? "Kategori"} Dokümanları` : "Arama Sonuçları"}</h1>
       <p className="mb-6 text-sm text-zinc-500">
         {query ? (
           <>
-            &quot;{query}&quot; için {data?.totalCount ?? 0} sonuç bulundu
+            &quot;{query}&quot; için {data?.totalCount ?? 0} sonuç bulundu{categoryName ? <> ({categoryName} kategorisinde)</> : null}
           </>
+        ) : categoryId ? (
+          <>{data?.totalCount ?? 0} doküman bulundu</>
         ) : (
           "Aramak için bir kelime girin"
         )}
@@ -47,7 +54,11 @@ function SearchResultsContent() {
       )}
 
       {!isLoading && !isFetching && data?.results.length === 0 && (
-        <EmptyState icon={FileText} title="Sonuç bulunamadı" description="Farklı bir arama terimi deneyin." />
+        <EmptyState
+          icon={FileText}
+          title="Sonuç bulunamadı"
+          description={categoryId && !query ? "Bu kategoride görüntüleyebileceğiniz bir doküman yok." : "Farklı bir arama terimi deneyin."}
+        />
       )}
 
       <div className="flex flex-col gap-3">

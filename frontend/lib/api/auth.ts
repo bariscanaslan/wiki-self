@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import type { LoginRequest, LoginResponse, RefreshTokenRequest, RefreshTokenResponse } from "../types";
+import type { LoginRequest, LoginResponse, RefreshTokenRequest, RefreshTokenResponse, VerifyPasswordRequest } from "../types";
 import type { UserResponse } from "../types";
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {
@@ -19,4 +19,8 @@ export async function logout(refreshToken: string): Promise<void> {
 export async function fetchMe(): Promise<UserResponse> {
   const response = await apiClient.get<UserResponse>("/auth/me");
   return response.data;
+}
+
+export async function verifyPassword(request: VerifyPasswordRequest): Promise<void> {
+  await apiClient.post("/auth/verify-password", request);
 }

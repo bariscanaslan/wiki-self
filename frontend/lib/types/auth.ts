@@ -25,3 +25,7 @@ export interface RefreshTokenResponse {
 export interface LogoutRequest {
   refreshToken: string;
 }
+
+export interface VerifyPasswordRequest {
+  password: string;
+}

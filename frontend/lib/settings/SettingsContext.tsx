@@ -22,6 +22,28 @@ function upsertHeadTag(selector: string, tagName: string, attributes: Record<str
   Object.entries(attributes).forEach(([key, value]) => element?.setAttribute(key, value));
 }
 
+function applyFavicon(href: string) {
+  const iconLinks = document.querySelectorAll<HTMLLinkElement>('link[rel~="icon"]');
+
+  if (iconLinks.length === 0) {
+    const link = document.createElement("link");
+    link.setAttribute("rel", "icon");
+    link.setAttribute("href", href);
+    document.head.appendChild(link);
+    return;
+  }
+
+  // Mutate every existing icon link in place (rather than removing/recreating nodes) since
+  // Next's App Router head-metadata manager still owns and tracks these DOM nodes; detaching
+  // them causes a "Cannot read properties of null (reading 'removeChild')" crash on the next
+  // client-side navigation when Next reconciles the head.
+  iconLinks.forEach((link) => {
+    link.setAttribute("href", href);
+    link.removeAttribute("type");
+    link.removeAttribute("sizes");
+  });
+}
+
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const { data: settings, isLoading } = useSettings();
 
@@ -39,7 +61,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
     const faviconUrl = resolveAssetUrl(settings.faviconUrl);
     if (faviconUrl) {
-      upsertHeadTag('link[rel="icon"]', "link", { rel: "icon", href: faviconUrl });
+      applyFavicon(faviconUrl);
     }
 
     document.documentElement.style.setProperty("--ui-font-active", resolveFontVariable(settings.uiFont));

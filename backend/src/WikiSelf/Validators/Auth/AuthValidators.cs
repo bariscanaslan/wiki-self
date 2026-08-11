@@ -27,3 +27,11 @@ public class LogoutRequestValidator : AbstractValidator<LogoutRequest>
         RuleFor(x => x.RefreshToken).NotEmpty();
     }
 }
+
+public class VerifyPasswordRequestValidator : AbstractValidator<VerifyPasswordRequest>
+{
+    public VerifyPasswordRequestValidator()
+    {
+        RuleFor(x => x.Password).NotEmpty();
+    }
+}

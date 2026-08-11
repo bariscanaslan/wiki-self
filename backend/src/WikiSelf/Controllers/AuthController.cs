@@ -46,4 +46,12 @@ public class AuthController : ControllerBase
     {
         return Ok(await _authService.GetMeAsync(_currentUser.UserId));
     }
+
+    [HttpPost("verify-password")]
+    [Authorize]
+    public async Task<IActionResult> VerifyPassword(VerifyPasswordRequest request)
+    {
+        await _authService.VerifyPasswordAsync(_currentUser.UserId, request);
+        return NoContent();
+    }
 }

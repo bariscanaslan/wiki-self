@@ -23,6 +23,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Assets
+
+assets/**
+
 # OS / editor
 .DS_Store
 Thumbs.db
@@ -30,3 +34,6 @@ Thumbs.db
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Docker
+.env

@@ -1,23 +1,26 @@
 "use client";
 
+import axios from "axios";
 import { motion } from "framer-motion";
-import { History, Pencil, Save } from "lucide-react";
+import { AlertTriangle, History, Lock, Pencil, Save } from "lucide-react";
+import { notFound } from "next/navigation";
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../lib/api/client";
 import { useDocument, useSaveDocument } from "../../lib/api/documents";
 import { canEdit } from "../../lib/auth/permissions";
 import { Button } from "../ui/Button";
+import { EmptyState } from "../ui/EmptyState";
 import { FullPageSpinner } from "../ui/Spinner";
 import { CategorySelect } from "./CategorySelect";
 import { DocumentEditor, type DocumentEditorHandle } from "./editor/DocumentEditor";
 import { DocumentView } from "./DocumentView";
-import { ExportPdfButton } from "./export/ExportPdfButton";
+import { ExportMenu } from "./export/ExportMenu";
 import { TagPicker } from "./TagPicker";
 import { VersionHistoryModal } from "./VersionHistoryModal";
 
 export function DocumentPage({ documentId }: { documentId: string }) {
-  const { data: document, isLoading } = useDocument(documentId);
+  const { data: document, isLoading, isError, error } = useDocument(documentId);
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("");
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -26,6 +29,32 @@ export function DocumentPage({ documentId }: { documentId: string }) {
 
   if (isLoading) {
     return <FullPageSpinner />;
+  }
+
+  if (isError) {
+    const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+
+    if (status === 404) {
+      notFound();
+    }
+
+    if (status === 403) {
+      return (
+        <div className="flex h-full items-center justify-center px-6 py-20">
+          <EmptyState
+            icon={Lock}
+            title="Erişim izniniz yok"
+            description="Bu dokümana erişim izniniz bulunmuyor. Erişim talep etmek için bir yöneticiyle iletişime geçin."
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex h-full items-center justify-center px-6 py-20">
+        <EmptyState icon={AlertTriangle} title="Doküman yüklenemedi" description={extractErrorMessage(error)} />
+      </div>
+    );
   }
 
   if (!document) {
@@ -74,7 +103,7 @@ export function DocumentPage({ documentId }: { documentId: string }) {
         <div className="flex shrink-0 gap-2">
           {!isEditing && (
             <>
-              <ExportPdfButton documentId={documentId} />
+              <ExportMenu documentId={documentId} />
               <Button variant="ghost" onClick={() => setIsHistoryOpen(true)}>
                 <History size={16} /> Geçmiş
               </Button>

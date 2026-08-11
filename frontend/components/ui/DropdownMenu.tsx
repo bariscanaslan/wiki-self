@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { cn } from "../../lib/utils/cn";
 
 interface DropdownMenuProps {
@@ -12,46 +13,80 @@ interface DropdownMenuProps {
   className?: string;
 }
 
+interface Position {
+  top: number;
+  left?: number;
+  right?: number;
+}
+
 export function DropdownMenu({ trigger, children, align = "right", className }: DropdownMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState<Position | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isOpen) {
       return;
     }
 
-    function handleClickOutside(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+    function updatePosition() {
+      const rect = containerRef.current?.getBoundingClientRect();
+      if (!rect) {
+        return;
       }
+
+      setPosition(
+        align === "right"
+          ? { top: rect.bottom + 8, right: window.innerWidth - rect.right }
+          : { top: rect.bottom + 8, left: rect.left },
+      );
+    }
+
+    updatePosition();
+
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
+      if (containerRef.current?.contains(target) || menuRef.current?.contains(target)) {
+        return;
+      }
+      setIsOpen(false);
     }
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isOpen]);
+    window.addEventListener("scroll", updatePosition, true);
+    window.addEventListener("resize", updatePosition);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("scroll", updatePosition, true);
+      window.removeEventListener("resize", updatePosition);
+    };
+  }, [isOpen, align]);
 
   return (
     <div ref={containerRef} className="relative">
       <div onClick={() => setIsOpen((prev) => !prev)}>{trigger}</div>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.96, y: -6 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: -6 }}
-            transition={{ duration: 0.14, ease: "easeOut" }}
-            onClick={() => setIsOpen(false)}
-            className={cn(
-              "absolute z-40 mt-2 min-w-[12rem] rounded-xl border border-zinc-200 bg-white p-1.5 shadow-lg",
-              align === "right" ? "right-0" : "left-0",
-              className,
+      {typeof document !== "undefined" &&
+        createPortal(
+          <AnimatePresence>
+            {isOpen && position && (
+              <motion.div
+                ref={menuRef}
+                initial={{ opacity: 0, scale: 0.96, y: -6 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: -6 }}
+                transition={{ duration: 0.14, ease: "easeOut" }}
+                onClick={() => setIsOpen(false)}
+                style={{ position: "fixed", top: position.top, left: position.left, right: position.right }}
+                className={cn("z-50 min-w-[12rem] rounded-xl border border-zinc-200 bg-white p-1.5 shadow-lg", className)}
+              >
+                {children}
+              </motion.div>
             )}
-          >
-            {children}
-          </motion.div>
+          </AnimatePresence>,
+          document.body,
         )}
-      </AnimatePresence>
     </div>
   );
 }

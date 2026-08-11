@@ -9,6 +9,7 @@ type ModalState =
   | { type: "rename"; folder: FolderTreeNode }
   | { type: "move"; folder: FolderTreeNode }
   | { type: "delete"; folder: FolderTreeNode }
+  | { type: "exportAll" }
   | null;
 
 interface FolderTreeUIContextValue {

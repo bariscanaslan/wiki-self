@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+**/AssetStorage/
+**/.vs/
+**/*.user
+**/*.suo
+.git
+.gitignore

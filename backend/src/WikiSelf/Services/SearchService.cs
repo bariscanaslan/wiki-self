@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using WikiSelf.Data;
 using WikiSelf.DTOs.Search;
+using WikiSelf.Entities;
 
 namespace WikiSelf.Services;
 
@@ -18,28 +19,57 @@ public class SearchService : ISearchService
         _permissionService = permissionService;
     }
 
-    public async Task<SearchResponse> SearchAsync(Guid userId, string query, int page, int pageSize)
+    public async Task<SearchResponse> SearchAsync(Guid userId, string query, int page, int pageSize, Guid? categoryId = null)
     {
         page = Math.Max(page, 1);
         pageSize = Math.Clamp(pageSize, 1, 100);
 
-        if (string.IsNullOrWhiteSpace(query))
+        var hasQuery = !string.IsNullOrWhiteSpace(query);
+
+        if (!hasQuery && !categoryId.HasValue)
         {
             return new SearchResponse([], 0, page, pageSize);
         }
 
-        var matches = await _db.Documents
-            .AsNoTracking()
-            .Include(d => d.Folder)
-            .Where(d => d.SearchVector.Matches(EF.Functions.WebSearchToTsQuery("english", query)))
-            .Select(d => new
+        List<(Document Document, float Rank)> matches;
+
+        if (hasQuery)
+        {
+            IQueryable<Document> textQuery = _db.Documents
+                .AsNoTracking()
+                .Include(d => d.Folder)
+                .Where(d => d.SearchVector.Matches(EF.Functions.WebSearchToTsQuery("english", query)));
+
+            if (categoryId.HasValue)
             {
-                Document = d,
-                Rank = d.SearchVector.Rank(EF.Functions.WebSearchToTsQuery("english", query))
-            })
-            .OrderByDescending(x => x.Rank)
-            .Take(CandidatePoolSize)
-            .ToListAsync();
+                textQuery = textQuery.Where(d => d.CategoryId == categoryId.Value);
+            }
+
+            var ranked = await textQuery
+                .Select(d => new
+                {
+                    Document = d,
+                    Rank = d.SearchVector.Rank(EF.Functions.WebSearchToTsQuery("english", query))
+                })
+                .OrderByDescending(x => x.Rank)
+                .Take(CandidatePoolSize)
+                .ToListAsync();
+
+            matches = ranked.Select(x => (x.Document, x.Rank)).ToList();
+        }
+        else
+        {
+            // Category-only browsing (no free-text query): list the category's documents, most-recently-updated first.
+            var categoryDocuments = await _db.Documents
+                .AsNoTracking()
+                .Include(d => d.Folder)
+                .Where(d => d.CategoryId == categoryId!.Value)
+                .OrderByDescending(d => d.UpdatedAt)
+                .Take(CandidatePoolSize)
+                .ToListAsync();
+
+            matches = categoryDocuments.Select(d => (d, 0f)).ToList();
+        }
 
         var permissions = await _permissionService.GetEffectiveDocumentPermissionsAsync(
             userId, matches.Select(m => m.Document));
