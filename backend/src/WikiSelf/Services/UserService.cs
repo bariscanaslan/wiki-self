@@ -135,6 +135,22 @@ public class UserService : IUserService
     public async Task DeleteAsync(Guid id)
     {
         var user = await _db.Users.FindAsync(id) ?? throw new NotFoundException("User not found.");
+
+        // Folders/documents/versions/assets/audit logs authored by this user reference it with
+        // ON DELETE RESTRICT (by design, to keep authorship and the audit trail intact), so a hard
+        // delete would fail at the database level once the user has any activity. Deactivating
+        // (IsActive = false) is the supported way to remove access from such a user.
+        var hasActivity = await _db.AuditLogs.AnyAsync(a => a.UserId == id)
+            || await _db.Folders.AnyAsync(f => f.CreatedByUserId == id)
+            || await _db.Documents.AnyAsync(d => d.CreatedByUserId == id)
+            || await _db.DocumentVersions.AnyAsync(v => v.AuthorUserId == id)
+            || await _db.Assets.AnyAsync(a => a.UploadedByUserId == id);
+
+        if (hasActivity)
+        {
+            throw new ConflictException("This user has created content or has activity history and cannot be deleted. Deactivate the account instead.");
+        }
+
         _db.Users.Remove(user);
         await _db.SaveChangesAsync();
     }
