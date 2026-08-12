@@ -51,8 +51,11 @@ public class FolderService : IFolderService
 
         var documentsByFolder = accessibleDocuments
             .GroupBy(d => d.FolderId)
-            .ToDictionary(g => g.Key, g => g.Select(d => new DocumentSummaryResponse(
-                d.Id, d.Title, d.FolderId, d.CategoryId, d.CreatedAt, d.UpdatedAt)).ToList());
+            .ToDictionary(g => g.Key, g => g
+                .OrderBy(d => d.Title)
+                .Select(d => new DocumentSummaryResponse(
+                    d.Id, d.Title, d.FolderId, d.CategoryId, d.CreatedAt, d.UpdatedAt))
+                .ToList());
 
         var nodesById = new Dictionary<Guid, FolderTreeNodeResponse>();
         var childrenByParent = new Dictionary<Guid, List<FolderTreeNodeResponse>>();
