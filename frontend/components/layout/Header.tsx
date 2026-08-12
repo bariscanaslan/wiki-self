@@ -1,17 +1,34 @@
 "use client";
 
 import Link from "next/link";
+import { Menu, X } from "lucide-react";
 import { resolveAssetUrl } from "../../lib/api/client";
 import { useSiteSettings } from "../../lib/settings/SettingsContext";
 import { SearchBox } from "../search/SearchBox";
 import { UserMenu } from "./UserMenu";
 
-export function Header() {
+type HeaderProps = {
+  isMobileSidebarOpen: boolean;
+  onMobileSidebarToggle: () => void;
+};
+
+export function Header({ isMobileSidebarOpen, onMobileSidebarToggle }: HeaderProps) {
   const { settings } = useSiteSettings();
   const logoUrl = resolveAssetUrl(settings?.logoUrl);
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-4 border-b border-zinc-100 bg-white px-4 sm:px-6">
+    <header className="flex h-16 shrink-0 items-center gap-2 border-b border-zinc-100 bg-white px-4 sm:px-6 md:gap-4">
+      <button
+        type="button"
+        onClick={onMobileSidebarToggle}
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 md:hidden"
+        aria-label={isMobileSidebarOpen ? "Menüyü kapat" : "Menüyü aç"}
+        aria-controls="mobile-sidebar"
+        aria-expanded={isMobileSidebarOpen}
+      >
+        {isMobileSidebarOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+      </button>
+
       <Link href="/" className="flex shrink-0 items-center gap-2.5">
         {logoUrl ? (
           <img src={logoUrl} alt={settings?.companyName ?? "Logo"} className="h-9 w-9 rounded-lg object-cover" />
@@ -25,7 +42,7 @@ export function Header() {
         </span>
       </Link>
 
-      <div className="max-w-xl flex-1">
+      <div className="min-w-0 max-w-xl flex-1">
         <SearchBox />
       </div>
 
