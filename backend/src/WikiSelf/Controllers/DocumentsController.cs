@@ -94,13 +94,6 @@ public class DocumentsController : ControllerBase
         return Ok(await _documentService.AssignTagsAsync(id, _currentUser.UserId, request));
     }
 
-    [HttpPut("{id:guid}/category")]
-    public async Task<ActionResult<DocumentResponse>> AssignCategory(Guid id, AssignDocumentCategoryRequest request)
-    {
-        await EnsureDocumentPermissionAsync(id, PermissionPolicies.RequireEdit);
-        return Ok(await _documentService.AssignCategoryAsync(id, _currentUser.UserId, request));
-    }
-
     [HttpPut("{id:guid}/move")]
     public async Task<ActionResult<DocumentResponse>> Move(Guid id, MoveDocumentRequest request)
     {

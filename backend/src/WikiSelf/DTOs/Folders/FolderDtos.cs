@@ -8,6 +8,7 @@ public record FolderResponse(
     string Name,
     Guid? ParentId,
     string MaterializedPath,
+    string? Icon,
     DateTime CreatedAt,
     PermissionLevel? EffectivePermission);
 
@@ -16,6 +17,7 @@ public record FolderTreeNodeResponse(
     string Name,
     Guid? ParentId,
     string MaterializedPath,
+    string? Icon,
     DateTime CreatedAt,
     PermissionLevel? EffectivePermission,
     IReadOnlyList<FolderTreeNodeResponse> Children,
@@ -26,3 +28,5 @@ public record CreateFolderRequest(string Name, Guid? ParentId);
 public record RenameFolderRequest(string Name);
 
 public record MoveFolderRequest(Guid? NewParentId);
+
+public record UpdateFolderIconRequest(string Icon);

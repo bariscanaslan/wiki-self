@@ -3,7 +3,6 @@ import axios from "axios";
 import { apiClient } from "./client";
 import { queryKeys } from "./queryKeys";
 import type {
-  AssignDocumentCategoryRequest,
   AssignDocumentTagsRequest,
   CreateDocumentRequest,
   DocumentResponse,
@@ -47,11 +46,6 @@ async function restoreVersion(id: string, versionId: string): Promise<DocumentRe
 
 async function assignTags(id: string, request: AssignDocumentTagsRequest): Promise<DocumentResponse> {
   const response = await apiClient.put<DocumentResponse>(`/documents/${id}/tags`, request);
-  return response.data;
-}
-
-async function assignCategory(id: string, request: AssignDocumentCategoryRequest): Promise<DocumentResponse> {
-  const response = await apiClient.put<DocumentResponse>(`/documents/${id}/category`, request);
   return response.data;
 }
 
@@ -142,14 +136,6 @@ export function useAssignDocumentTags() {
   });
 }
 
-export function useAssignDocumentCategory() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: ({ id, request }: { id: string; request: AssignDocumentCategoryRequest }) => assignCategory(id, request),
-    onSuccess: (data) => queryClient.setQueryData(queryKeys.document(data.id), data),
-  });
-}
-
 export function useMoveDocument() {
   const queryClient = useQueryClient();
   return useMutation({
@@ -177,10 +163,4 @@ export function useExportContent(id: string | undefined) {
   });
 }
 
-export function useLogExport() {
-  return useMutation({
-    mutationFn: ({ id, request }: { id: string; request: LogExportRequest }) => logExport(id, request),
-  });
-}
-
-export { getExportContent };
+export { getExportContent, logExport };

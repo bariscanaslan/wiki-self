@@ -4,49 +4,17 @@ import { Download, FileText, FileType } from "lucide-react";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../../lib/api/client";
-import { getExportContent, useLogExport } from "../../../lib/api/documents";
-import { renderTiptapDocumentToDocx } from "../../../lib/docx/renderTiptapToDocx";
-import { embedPdfFonts } from "../../../lib/pdf/embedFonts";
-import { renderTiptapDocumentToPdf, type TiptapNode } from "../../../lib/pdf/renderTiptapToPdf";
-import { parseDocumentJson } from "../../../lib/tiptap/extensions";
-import { downloadBlob } from "../../../lib/utils/download";
+import { exportDocument, type ExportFormat } from "../../../lib/export/exportDocument";
 import { DropdownItem, DropdownMenu } from "../../ui/DropdownMenu";
-
-type ExportFormat = "pdf" | "markdown" | "docx";
-
-function sanitizeFileName(name: string): string {
-  const cleaned = name.replace(/[\\/:*?"<>|]/g, "-").trim();
-  return cleaned.length > 0 ? cleaned : "dokuman";
-}
 
 export function ExportMenu({ documentId }: { documentId: string }) {
   const [exportingFormat, setExportingFormat] = useState<ExportFormat | null>(null);
-  const logExport = useLogExport();
 
   async function handleExport(format: ExportFormat) {
     setExportingFormat(format);
 
     try {
-      const content = await getExportContent(documentId);
-      const fileName = sanitizeFileName(content.title || "dokuman");
-
-      if (format === "markdown") {
-        const blob = new Blob([content.contentMarkdown], { type: "text/markdown;charset=utf-8" });
-        downloadBlob(blob, `${fileName}.md`);
-      } else if (format === "docx") {
-        const parsedDoc = parseDocumentJson(content.contentJson) as unknown as TiptapNode;
-        const blob = await renderTiptapDocumentToDocx(parsedDoc);
-        downloadBlob(blob, `${fileName}.docx`);
-      } else {
-        const { default: jsPDF } = await import("jspdf");
-        const pdf = new jsPDF({ unit: "pt", format: "a4" });
-        await embedPdfFonts(pdf);
-        const parsedDoc = parseDocumentJson(content.contentJson) as unknown as TiptapNode;
-        await renderTiptapDocumentToPdf(pdf, parsedDoc);
-        pdf.save(`${fileName}.pdf`);
-      }
-
-      await logExport.mutateAsync({ id: documentId, request: { format } });
+      await exportDocument(documentId, format);
       toast.success("Doküman indirildi");
     } catch (error) {
       toast.error(extractErrorMessage(error));

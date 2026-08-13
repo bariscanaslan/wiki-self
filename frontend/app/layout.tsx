@@ -1,8 +1,12 @@
+import { config as fontAwesomeConfig } from "@fortawesome/fontawesome-svg-core";
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import type { Metadata } from "next";
 import { Inter, Roboto, Merriweather, Lora, Poppins } from "next/font/google";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { Providers } from "../components/providers/Providers";
+
+fontAwesomeConfig.autoAddCss = false;
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const roboto = Roboto({ subsets: ["latin"], weight: ["400", "500", "700"], variable: "--font-roboto", display: "swap" });

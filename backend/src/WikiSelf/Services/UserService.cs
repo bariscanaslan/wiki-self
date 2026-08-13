@@ -25,7 +25,8 @@ public class UserService : IUserService
             user.IsAdmin,
             user.IsActive,
             user.CreatedAt,
-            user.UserGroups.Select(ug => new GroupSummaryResponse(ug.Group.Id, ug.Group.Name)).ToList());
+            user.UserGroups.Select(ug => new GroupSummaryResponse(ug.Group.Id, ug.Group.Name)).ToList(),
+            user.TwoFactorEnabled);
     }
 
     public async Task<IReadOnlyList<UserResponse>> GetAllAsync()

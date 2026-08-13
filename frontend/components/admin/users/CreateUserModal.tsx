@@ -7,6 +7,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 import { extractErrorMessage } from "@/lib/api/client";
 import { useCreateUser } from "@/lib/api/users";
 
@@ -47,7 +48,7 @@ export function CreateUserModal({ isOpen, onClose }: { isOpen: boolean; onClose:
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <Input label="Ad Soyad" error={errors.displayName?.message} {...register("displayName")} />
         <Input label="E-posta" type="email" error={errors.email?.message} {...register("email")} />
-        <Input label="Şifre" type="password" error={errors.password?.message} {...register("password")} />
+        <PasswordInput label="Şifre" error={errors.password?.message} {...register("password")} />
         <label className="flex items-center gap-2 text-sm text-zinc-700">
           <input type="checkbox" className="h-4 w-4 rounded border-zinc-300 text-primary-600 focus:ring-primary-400" {...register("isAdmin")} />
           Yönetici yetkisi ver

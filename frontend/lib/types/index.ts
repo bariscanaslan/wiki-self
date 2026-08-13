@@ -7,7 +7,6 @@ export * from "./folders";
 export * from "./documents";
 export * from "./search";
 export * from "./tags";
-export * from "./categories";
 export * from "./settings";
 export * from "./audit";
 export * from "./setup";

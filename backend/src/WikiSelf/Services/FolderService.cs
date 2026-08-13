@@ -54,7 +54,7 @@ public class FolderService : IFolderService
             .ToDictionary(g => g.Key, g => g
                 .OrderBy(d => d.Title)
                 .Select(d => new DocumentSummaryResponse(
-                    d.Id, d.Title, d.FolderId, d.CategoryId, d.CreatedAt, d.UpdatedAt))
+                    d.Id, d.Title, d.FolderId, d.CreatedAt, d.UpdatedAt, documentPermissions.GetValueOrDefault(d.Id)))
                 .ToList());
 
         var nodesById = new Dictionary<Guid, FolderTreeNodeResponse>();
@@ -69,6 +69,7 @@ public class FolderService : IFolderService
                 folder.Name,
                 folder.ParentId,
                 folder.MaterializedPath,
+                folder.Icon,
                 folder.CreatedAt,
                 effectivePermission,
                 new List<FolderTreeNodeResponse>(),
@@ -132,7 +133,7 @@ public class FolderService : IFolderService
         _db.Folders.Add(folder);
         await _db.SaveChangesAsync();
 
-        return new FolderResponse(folder.Id, folder.Name, folder.ParentId, folder.MaterializedPath, folder.CreatedAt, PermissionLevel.Manage);
+        return new FolderResponse(folder.Id, folder.Name, folder.ParentId, folder.MaterializedPath, folder.Icon, folder.CreatedAt, PermissionLevel.Manage);
     }
 
     public async Task<FolderResponse> RenameAsync(Guid folderId, RenameFolderRequest request)
@@ -151,7 +152,7 @@ public class FolderService : IFolderService
         folder.Name = request.Name;
         await _db.SaveChangesAsync();
 
-        return new FolderResponse(folder.Id, folder.Name, folder.ParentId, folder.MaterializedPath, folder.CreatedAt, null);
+        return new FolderResponse(folder.Id, folder.Name, folder.ParentId, folder.MaterializedPath, folder.Icon, folder.CreatedAt, null);
     }
 
     public async Task<FolderResponse> MoveAsync(Guid folderId, MoveFolderRequest request)
@@ -201,7 +202,23 @@ public class FolderService : IFolderService
 
         await _db.SaveChangesAsync();
 
-        return new FolderResponse(folder.Id, folder.Name, folder.ParentId, folder.MaterializedPath, folder.CreatedAt, null);
+        return new FolderResponse(folder.Id, folder.Name, folder.ParentId, folder.MaterializedPath, folder.Icon, folder.CreatedAt, null);
+    }
+
+    public async Task<FolderResponse> UpdateIconAsync(Guid folderId, UpdateFolderIconRequest request)
+    {
+        if (!FolderIconCatalog.AllowedIcons.Contains(request.Icon))
+        {
+            throw new BadRequestException("Unknown folder icon.");
+        }
+
+        var folder = await _db.Folders.FirstOrDefaultAsync(f => f.Id == folderId)
+                     ?? throw new NotFoundException("Folder not found.");
+
+        folder.Icon = request.Icon;
+        await _db.SaveChangesAsync();
+
+        return new FolderResponse(folder.Id, folder.Name, folder.ParentId, folder.MaterializedPath, folder.Icon, folder.CreatedAt, null);
     }
 
     public async Task DeleteAsync(Guid folderId)

@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { useState, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
@@ -11,6 +12,7 @@ import { useAuth } from "../../lib/auth/AuthContext";
 import { useSiteSettings } from "../../lib/settings/SettingsContext";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Input";
+import { PasswordInput } from "../ui/PasswordInput";
 
 const loginSchema = z.object({
   email: z.string().min(1, "E-posta gerekli").email("Geçerli bir e-posta girin"),
@@ -21,8 +23,11 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, completeTwoFactorLogin } = useAuth();
   const { settings } = useSiteSettings();
+  const [challengeToken, setChallengeToken] = useState<string | null>(null);
+  const [code, setCode] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
   const {
     register,
     handleSubmit,
@@ -33,10 +38,31 @@ export function LoginForm() {
 
   async function onSubmit(values: LoginFormValues) {
     try {
-      await login(values);
+      const result = await login(values);
+      if (result.requiresTwoFactor && result.challengeToken) {
+        setChallengeToken(result.challengeToken);
+        return;
+      }
       router.replace("/");
     } catch (error) {
       toast.error(extractErrorMessage(error));
+    }
+  }
+
+  async function handleVerify(event: FormEvent) {
+    event.preventDefault();
+    if (!challengeToken || !code.trim()) {
+      return;
+    }
+
+    setIsVerifying(true);
+    try {
+      await completeTwoFactorLogin(challengeToken, code.trim());
+      router.replace("/");
+    } catch (error) {
+      toast.error(extractErrorMessage(error));
+    } finally {
+      setIsVerifying(false);
     }
   }
 
@@ -57,16 +83,43 @@ export function LoginForm() {
             </div>
           )}
           <h1 className="text-xl font-bold text-zinc-900">{settings?.companyName || "WikiSelf"}</h1>
-          <p className="mt-1 text-sm text-zinc-500">Devam etmek için giriş yapın</p>
+          <p className="mt-1 text-sm text-zinc-500">
+            {challengeToken ? "Authenticator uygulamanızdaki kodu girin" : "Devam etmek için giriş yapın"}
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          <Input label="E-posta" type="email" placeholder="you@company.com" error={errors.email?.message} {...register("email")} />
-          <Input label="Şifre" type="password" placeholder="••••••••" error={errors.password?.message} {...register("password")} />
-          <Button type="submit" isLoading={isSubmitting} className="mt-2 w-full">
-            Giriş Yap
-          </Button>
-        </form>
+        {challengeToken ? (
+          <form key="verify" onSubmit={handleVerify} className="flex flex-col gap-4">
+            <Input
+              label="Doğrulama Kodu"
+              placeholder="123456 veya kurtarma kodu"
+              autoFocus
+              value={code}
+              onChange={(event) => setCode(event.target.value)}
+            />
+            <Button type="submit" isLoading={isVerifying} className="mt-2 w-full">
+              Doğrula
+            </Button>
+            <button
+              type="button"
+              onClick={() => {
+                setChallengeToken(null);
+                setCode("");
+              }}
+              className="text-center text-xs font-medium text-zinc-500 hover:text-primary-600"
+            >
+              Farklı bir hesapla giriş yap
+            </button>
+          </form>
+        ) : (
+          <form key="credentials" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+            <Input label="E-posta" type="email" placeholder="you@company.com" error={errors.email?.message} {...register("email")} />
+            <PasswordInput label="Şifre" placeholder="••••••••" error={errors.password?.message} {...register("password")} />
+            <Button type="submit" isLoading={isSubmitting} className="mt-2 w-full">
+              Giriş Yap
+            </Button>
+          </form>
+        )}
       </motion.div>
     </div>
   );

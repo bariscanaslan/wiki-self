@@ -8,6 +8,7 @@ export interface UserResponse {
   isActive: boolean;
   createdAt: string;
   groups: GroupSummary[];
+  twoFactorEnabled: boolean;
 }
 
 export interface CreateUserRequest {

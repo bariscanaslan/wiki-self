@@ -7,7 +7,7 @@ import { Suspense } from "react";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Spinner } from "@/components/ui/Spinner";
-import { useCategories } from "@/lib/api/categories";
+import { useTags } from "@/lib/api/tags";
 import { useSearch } from "@/lib/api/search";
 
 const PAGE_SIZE = 20;
@@ -16,13 +16,13 @@ function SearchResultsContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const query = searchParams.get("q") ?? "";
-  const categoryId = searchParams.get("categoryId") ?? undefined;
+  const tagId = searchParams.get("tagId") ?? undefined;
   const page = Number(searchParams.get("page") ?? "1");
 
-  const { data: categories } = useCategories();
-  const categoryName = categoryId ? categories?.find((category) => category.id === categoryId)?.name : undefined;
+  const { data: tags } = useTags();
+  const tagName = tagId ? tags?.find((tag) => tag.id === tagId)?.name : undefined;
 
-  const { data, isLoading, isFetching } = useSearch(query, page, PAGE_SIZE, categoryId);
+  const { data, isLoading, isFetching } = useSearch(query, page, PAGE_SIZE, tagId);
 
   function goToPage(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -34,13 +34,13 @@ function SearchResultsContent() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
-      <h1 className="mb-1 text-xl font-bold text-zinc-900">{categoryId && !query ? `${categoryName ?? "Kategori"} Dokümanları` : "Arama Sonuçları"}</h1>
+      <h1 className="mb-1 text-xl font-bold text-zinc-900">{tagId && !query ? `${tagName ?? "Etiket"} Dokümanları` : "Arama Sonuçları"}</h1>
       <p className="mb-6 text-sm text-zinc-500">
         {query ? (
           <>
-            &quot;{query}&quot; için {data?.totalCount ?? 0} sonuç bulundu{categoryName ? <> ({categoryName} kategorisinde)</> : null}
+            &quot;{query}&quot; için {data?.totalCount ?? 0} sonuç bulundu{tagName ? <> ({tagName} etiketinde)</> : null}
           </>
-        ) : categoryId ? (
+        ) : tagId ? (
           <>{data?.totalCount ?? 0} doküman bulundu</>
         ) : (
           "Aramak için bir kelime girin"
@@ -57,7 +57,7 @@ function SearchResultsContent() {
         <EmptyState
           icon={FileText}
           title="Sonuç bulunamadı"
-          description={categoryId && !query ? "Bu kategoride görüntüleyebileceğiniz bir doküman yok." : "Farklı bir arama terimi deneyin."}
+          description={tagId && !query ? "Bu etikete sahip görüntüleyebileceğiniz bir doküman yok." : "Farklı bir arama terimi deneyin."}
         />
       )}
 

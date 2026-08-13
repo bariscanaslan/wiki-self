@@ -48,6 +48,12 @@ public class AssetsController : ControllerBase
         return Ok(await _assetService.GetMetadataAsync(id));
     }
 
+    [HttpGet("images")]
+    public async Task<ActionResult<ImageAssetListResponse>> GetImages([FromQuery] int page = 1, [FromQuery] int pageSize = 30)
+    {
+        return Ok(await _assetService.GetImageAssetsAsync(_currentUser.UserId, page, pageSize));
+    }
+
     [HttpGet("{id:guid}/file")]
     [AllowAnonymous]
     public async Task<IActionResult> GetFile(Guid id)
@@ -57,9 +63,25 @@ public class AssetsController : ControllerBase
     }
 
     [HttpDelete("{id:guid}")]
-    [Authorize(Policy = "RequireAdmin")]
     public async Task<IActionResult> Delete(Guid id)
     {
+        var asset = await _assetService.GetMetadataAsync(id);
+
+        if (asset.DocumentId.HasValue)
+        {
+            var result = await _authorizationService.AuthorizeAsync(
+                User, new ResourceKey(ResourceType.Document, asset.DocumentId.Value), PermissionPolicies.RequireEdit);
+
+            if (!result.Succeeded)
+            {
+                throw new ForbiddenException();
+            }
+        }
+        else if (!_currentUser.IsAdmin)
+        {
+            throw new ForbiddenException();
+        }
+
         await _assetService.DeleteAsync(id);
         return NoContent();
     }

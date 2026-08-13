@@ -46,11 +46,6 @@ export interface TagResponse {
   name: string;
 }
 
-export interface CategoryResponse {
-  id: string;
-  name: string;
-}
-
 export interface AssetResponse {
   id: string;
   fileName: string;
@@ -58,4 +53,21 @@ export interface AssetResponse {
   createdAt: string;
   url: string;
   documentId: string | null;
+}
+
+export interface ImageAssetResponse {
+  id: string;
+  fileName: string;
+  url: string;
+  createdAt: string;
+  documentId: string;
+  documentTitle: string;
+  effectivePermission: PermissionLevel | null;
+}
+
+export interface ImageAssetListResponse {
+  items: ImageAssetResponse[];
+  total: number;
+  page: number;
+  pageSize: number;
 }

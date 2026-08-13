@@ -7,6 +7,7 @@ public class Folder
     public Guid? ParentId { get; set; }
     public Folder? Parent { get; set; }
     public string MaterializedPath { get; set; } = string.Empty;
+    public string? Icon { get; set; }
     public DateTime CreatedAt { get; set; }
     public Guid CreatedByUserId { get; set; }
     public User CreatedByUser { get; set; } = null!;

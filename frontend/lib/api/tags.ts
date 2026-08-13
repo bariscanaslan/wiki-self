@@ -46,6 +46,12 @@ export function useDeleteTag() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteTag,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.tags }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.tags });
+      // A deleted tag is cascade-removed from every document's tag list on the backend;
+      // invalidate all document-detail caches so any document open in this session drops
+      // the now-stale tag chip instead of showing it until a manual reload.
+      queryClient.invalidateQueries({ queryKey: ["documents"] });
+    },
   });
 }

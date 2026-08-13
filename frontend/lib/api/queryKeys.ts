@@ -12,8 +12,8 @@ export const queryKeys = {
   documentVersions: (id: string) => ["documents", id, "versions"] as const,
   documentVersion: (id: string, versionId: string) => ["documents", id, "versions", versionId] as const,
   documentExport: (id: string) => ["documents", id, "export"] as const,
-  search: (query: string, page: number, categoryId?: string) => ["search", query, page, categoryId ?? null] as const,
+  search: (query: string, page: number, tagId?: string) => ["search", query, page, tagId ?? null] as const,
   tags: ["tags"] as const,
-  categories: ["categories"] as const,
   auditLogs: (filter: Record<string, unknown>) => ["audit", filter] as const,
+  images: (limit: number) => ["assets", "images", limit] as const,
 };

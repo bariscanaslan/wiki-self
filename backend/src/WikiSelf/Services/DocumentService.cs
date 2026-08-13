@@ -61,7 +61,6 @@ public class DocumentService : IDocumentService
             document.Id,
             document.Title,
             document.FolderId,
-            document.CategoryId,
             document.CurrentVersion?.ContentJson ?? string.Empty,
             document.CurrentVersion?.ContentMarkdown ?? string.Empty,
             document.CurrentVersion?.VersionNumber ?? 0,
@@ -92,21 +91,11 @@ public class DocumentService : IDocumentService
             throw new NotFoundException("Folder not found.");
         }
 
-        if (request.CategoryId.HasValue)
-        {
-            var categoryExists = await _db.Categories.AnyAsync(c => c.Id == request.CategoryId.Value);
-            if (!categoryExists)
-            {
-                throw new NotFoundException("Category not found.");
-            }
-        }
-
         var document = new Document
         {
             Id = Guid.NewGuid(),
             Title = request.Title,
             FolderId = request.FolderId,
-            CategoryId = request.CategoryId,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
             CreatedByUserId = userId,
@@ -278,27 +267,6 @@ public class DocumentService : IDocumentService
             document.DocumentTags.Add(new DocumentTag { DocumentId = documentId, TagId = tagId });
         }
 
-        await _db.SaveChangesAsync();
-
-        var updated = await WithIncludes(_db.Documents.AsNoTracking()).FirstAsync(d => d.Id == documentId);
-        return await ToResponseAsync(updated, userId);
-    }
-
-    public async Task<DocumentResponse> AssignCategoryAsync(Guid documentId, Guid userId, AssignDocumentCategoryRequest request)
-    {
-        var document = await _db.Documents.FirstOrDefaultAsync(d => d.Id == documentId)
-                        ?? throw new NotFoundException("Document not found.");
-
-        if (request.CategoryId.HasValue)
-        {
-            var categoryExists = await _db.Categories.AnyAsync(c => c.Id == request.CategoryId.Value);
-            if (!categoryExists)
-            {
-                throw new NotFoundException("Category not found.");
-            }
-        }
-
-        document.CategoryId = request.CategoryId;
         await _db.SaveChangesAsync();
 
         var updated = await WithIncludes(_db.Documents.AsNoTracking()).FirstAsync(d => d.Id == documentId);

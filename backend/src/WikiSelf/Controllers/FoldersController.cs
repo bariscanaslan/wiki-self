@@ -80,6 +80,13 @@ public class FoldersController : ControllerBase
         return Ok(await _folderService.MoveAsync(id, request));
     }
 
+    [HttpPut("{id:guid}/icon")]
+    public async Task<ActionResult<FolderResponse>> UpdateIcon(Guid id, UpdateFolderIconRequest request)
+    {
+        await EnsureFolderPermissionAsync(id, PermissionPolicies.RequireManage);
+        return Ok(await _folderService.UpdateIconAsync(id, request));
+    }
+
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {

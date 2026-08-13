@@ -9,7 +9,8 @@ public record UserResponse(
     bool IsAdmin,
     bool IsActive,
     DateTime CreatedAt,
-    IReadOnlyList<GroupSummaryResponse> Groups);
+    IReadOnlyList<GroupSummaryResponse> Groups,
+    bool TwoFactorEnabled);
 
 public record CreateUserRequest(string Email, string Password, string DisplayName, bool IsAdmin);
 

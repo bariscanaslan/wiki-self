@@ -8,15 +8,14 @@ public record DocumentSummaryResponse(
     Guid Id,
     string Title,
     Guid FolderId,
-    Guid? CategoryId,
     DateTime CreatedAt,
-    DateTime UpdatedAt);
+    DateTime UpdatedAt,
+    PermissionLevel? EffectivePermission);
 
 public record DocumentResponse(
     Guid Id,
     string Title,
     Guid FolderId,
-    Guid? CategoryId,
     string ContentJson,
     string ContentMarkdown,
     int VersionNumber,
@@ -32,7 +31,6 @@ public record CreateDocumentRequest(
     Guid FolderId,
     string ContentJson,
     string ContentMarkdown,
-    Guid? CategoryId,
     IReadOnlyList<Guid>? TagIds);
 
 public record SaveDocumentRequest(string Title, string ContentJson, string ContentMarkdown);
@@ -40,8 +38,6 @@ public record SaveDocumentRequest(string Title, string ContentJson, string Conte
 public record MoveDocumentRequest(Guid FolderId);
 
 public record AssignDocumentTagsRequest(IReadOnlyList<Guid> TagIds);
-
-public record AssignDocumentCategoryRequest(Guid? CategoryId);
 
 public record DocumentVersionResponse(
     Guid Id,

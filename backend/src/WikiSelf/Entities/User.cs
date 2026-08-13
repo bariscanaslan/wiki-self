@@ -10,6 +10,10 @@ public class User
     public bool IsActive { get; set; } = true;
     public DateTime CreatedAt { get; set; }
 
+    public bool TwoFactorEnabled { get; set; }
+    public string? TwoFactorSecret { get; set; }
+    public string? TwoFactorRecoveryCodesHash { get; set; }
+
     public ICollection<UserGroup> UserGroups { get; set; } = new List<UserGroup>();
     public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 }

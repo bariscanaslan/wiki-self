@@ -19,14 +19,14 @@ public class SearchService : ISearchService
         _permissionService = permissionService;
     }
 
-    public async Task<SearchResponse> SearchAsync(Guid userId, string query, int page, int pageSize, Guid? categoryId = null)
+    public async Task<SearchResponse> SearchAsync(Guid userId, string query, int page, int pageSize, Guid? tagId = null)
     {
         page = Math.Max(page, 1);
         pageSize = Math.Clamp(pageSize, 1, 100);
 
         var hasQuery = !string.IsNullOrWhiteSpace(query);
 
-        if (!hasQuery && !categoryId.HasValue)
+        if (!hasQuery && !tagId.HasValue)
         {
             return new SearchResponse([], 0, page, pageSize);
         }
@@ -40,9 +40,9 @@ public class SearchService : ISearchService
                 .Include(d => d.Folder)
                 .Where(d => d.SearchVector.Matches(EF.Functions.WebSearchToTsQuery("english", query)));
 
-            if (categoryId.HasValue)
+            if (tagId.HasValue)
             {
-                textQuery = textQuery.Where(d => d.CategoryId == categoryId.Value);
+                textQuery = textQuery.Where(d => d.DocumentTags.Any(dt => dt.TagId == tagId.Value));
             }
 
             var ranked = await textQuery
@@ -59,16 +59,16 @@ public class SearchService : ISearchService
         }
         else
         {
-            // Category-only browsing (no free-text query): list the category's documents, most-recently-updated first.
-            var categoryDocuments = await _db.Documents
+            // Tag-only browsing (no free-text query): list the tag's documents, most-recently-updated first.
+            var tagDocuments = await _db.Documents
                 .AsNoTracking()
                 .Include(d => d.Folder)
-                .Where(d => d.CategoryId == categoryId!.Value)
+                .Where(d => d.DocumentTags.Any(dt => dt.TagId == tagId!.Value))
                 .OrderByDescending(d => d.UpdatedAt)
                 .Take(CandidatePoolSize)
                 .ToListAsync();
 
-            matches = categoryDocuments.Select(d => (d, 0f)).ToList();
+            matches = tagDocuments.Select(d => (d, 0f)).ToList();
         }
 
         var permissions = await _permissionService.GetEffectiveDocumentPermissionsAsync(

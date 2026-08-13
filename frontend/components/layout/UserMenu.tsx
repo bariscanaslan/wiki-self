@@ -1,6 +1,6 @@
 "use client";
 
-import { LogOut, ScrollText, Settings, Shield, Users as UsersIcon } from "lucide-react";
+import { KeyRound, LogOut, ScrollText, Settings, Shield, Users as UsersIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Avatar } from "../ui/Avatar";
 import { DropdownItem, DropdownMenu } from "../ui/DropdownMenu";
@@ -32,6 +32,9 @@ export function UserMenu() {
         <p className="truncate text-xs text-zinc-500">{user.email}</p>
       </div>
       <div className="py-1">
+        <DropdownItem href="/account/security">
+          <KeyRound size={16} /> Hesap Güvenliği
+        </DropdownItem>
         {user.isAdmin && (
           <>
             <DropdownItem href="/admin/users">

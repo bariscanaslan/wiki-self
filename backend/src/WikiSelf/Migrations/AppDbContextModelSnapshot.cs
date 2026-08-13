@@ -104,32 +104,10 @@ namespace WikiSelf.Migrations
                     b.ToTable("AuditLogs", (string)null);
                 });
 
-            modelBuilder.Entity("WikiSelf.Entities.Category", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Categories", (string)null);
-                });
-
             modelBuilder.Entity("WikiSelf.Entities.Document", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid?>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -170,8 +148,6 @@ namespace WikiSelf.Migrations
                         .HasDefaultValueSql("now()");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
 
                     b.HasIndex("CreatedByUserId");
 
@@ -253,6 +229,10 @@ namespace WikiSelf.Migrations
                     b.Property<Guid>("CreatedByUserId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Icon")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)");
+
                     b.Property<string>("MaterializedPath")
                         .IsRequired()
                         .HasMaxLength(2048)
@@ -298,6 +278,31 @@ namespace WikiSelf.Migrations
                         .IsUnique();
 
                     b.ToTable("Groups", (string)null);
+                });
+
+            modelBuilder.Entity("WikiSelf.Entities.MfaChallenge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MfaChallenges", (string)null);
                 });
 
             modelBuilder.Entity("WikiSelf.Entities.Permission", b =>
@@ -474,6 +479,15 @@ namespace WikiSelf.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("TwoFactorRecoveryCodesHash")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TwoFactorSecret")
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -528,11 +542,6 @@ namespace WikiSelf.Migrations
 
             modelBuilder.Entity("WikiSelf.Entities.Document", b =>
                 {
-                    b.HasOne("WikiSelf.Entities.Category", "Category")
-                        .WithMany("Documents")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("WikiSelf.Entities.User", "CreatedByUser")
                         .WithMany()
                         .HasForeignKey("CreatedByUserId")
@@ -549,8 +558,6 @@ namespace WikiSelf.Migrations
                         .HasForeignKey("FolderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Category");
 
                     b.Navigation("CreatedByUser");
 
@@ -615,6 +622,17 @@ namespace WikiSelf.Migrations
                     b.Navigation("Parent");
                 });
 
+            modelBuilder.Entity("WikiSelf.Entities.MfaChallenge", b =>
+                {
+                    b.HasOne("WikiSelf.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("WikiSelf.Entities.Permission", b =>
                 {
                     b.HasOne("WikiSelf.Entities.Group", "Group")
@@ -671,11 +689,6 @@ namespace WikiSelf.Migrations
                     b.Navigation("Group");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("WikiSelf.Entities.Category", b =>
-                {
-                    b.Navigation("Documents");
                 });
 
             modelBuilder.Entity("WikiSelf.Entities.Document", b =>

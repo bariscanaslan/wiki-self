@@ -11,12 +11,16 @@ namespace WikiSelf.Services;
 
 public class AssetService : IAssetService
 {
+    private const int CandidatePoolSize = 500;
+
     private readonly AppDbContext _db;
+    private readonly IPermissionService _permissionService;
     private readonly string _rootPath;
 
-    public AssetService(AppDbContext db, IOptions<AssetStorageSettings> storageSettings)
+    public AssetService(AppDbContext db, IPermissionService permissionService, IOptions<AssetStorageSettings> storageSettings)
     {
         _db = db;
+        _permissionService = permissionService;
         _rootPath = Path.IsPathRooted(storageSettings.Value.RootPath)
             ? storageSettings.Value.RootPath
             : Path.Combine(AppContext.BaseDirectory, storageSettings.Value.RootPath);
@@ -92,6 +96,36 @@ public class AssetService : IAssetService
                     ?? throw new NotFoundException("Asset not found.");
 
         return ToResponse(asset);
+    }
+
+    public async Task<ImageAssetListResponse> GetImageAssetsAsync(Guid userId, int page, int pageSize)
+    {
+        page = Math.Max(page, 1);
+        pageSize = Math.Clamp(pageSize, 1, 100);
+
+        var candidates = await _db.Assets
+            .AsNoTracking()
+            .Include(a => a.Document)
+            .ThenInclude(d => d!.Folder)
+            .Where(a => a.DocumentId != null && a.ContentType.StartsWith("image/"))
+            .OrderByDescending(a => a.CreatedAt)
+            .Take(CandidatePoolSize)
+            .ToListAsync();
+
+        var permissions = await _permissionService.GetEffectiveDocumentPermissionsAsync(
+            userId, candidates.Select(a => a.Document!));
+
+        var accessible = candidates.Where(a => permissions.ContainsKey(a.DocumentId!.Value)).ToList();
+
+        var pageItems = accessible
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(a => new ImageAssetResponse(
+                a.Id, a.FileName, $"/api/assets/{a.Id}/file", a.CreatedAt, a.DocumentId!.Value, a.Document!.Title,
+                permissions.GetValueOrDefault(a.DocumentId!.Value)))
+            .ToList();
+
+        return new ImageAssetListResponse(pageItems, accessible.Count, page, pageSize);
     }
 
     public async Task DeleteAsync(Guid id)

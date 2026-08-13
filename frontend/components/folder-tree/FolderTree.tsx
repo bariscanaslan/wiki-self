@@ -11,6 +11,7 @@ import { CreateDocumentModal } from "./modals/CreateDocumentModal";
 import { CreateFolderModal } from "./modals/CreateFolderModal";
 import { DeleteFolderDialog } from "./modals/DeleteFolderDialog";
 import { ExportAllModal } from "./modals/ExportAllModal";
+import { FolderIconPicker } from "./modals/FolderIconPicker";
 import { MoveFolderModal } from "./modals/MoveFolderModal";
 import { RenameFolderModal } from "./modals/RenameFolderModal";
 
@@ -71,6 +72,7 @@ function FolderTreeInner() {
         tree={tree ?? []}
       />
       <DeleteFolderDialog isOpen={modal?.type === "delete"} folder={modal?.type === "delete" ? modal.folder : null} onClose={closeModal} />
+      <FolderIconPicker isOpen={modal?.type === "icon"} folder={modal?.type === "icon" ? modal.folder : null} onClose={closeModal} />
       <ExportAllModal isOpen={modal?.type === "exportAll"} onClose={closeModal} />
     </div>
   );

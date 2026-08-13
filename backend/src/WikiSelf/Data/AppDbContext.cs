@@ -18,11 +18,11 @@ public class AppDbContext : DbContext
     public DbSet<DocumentVersion> DocumentVersions => Set<DocumentVersion>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<DocumentTag> DocumentTags => Set<DocumentTag>();
-    public DbSet<Category> Categories => Set<Category>();
     public DbSet<Permission> Permissions => Set<Permission>();
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<Asset> Assets => Set<Asset>();
     public DbSet<SiteSettings> SiteSettings => Set<SiteSettings>();
+    public DbSet<MfaChallenge> MfaChallenges => Set<MfaChallenge>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

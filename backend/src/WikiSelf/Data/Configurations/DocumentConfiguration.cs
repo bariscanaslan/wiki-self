@@ -44,11 +44,6 @@ public class DocumentConfiguration : IEntityTypeConfiguration<Document>
             .HasForeignKey(d => d.CreatedByUserId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(d => d.Category)
-            .WithMany(c => c.Documents)
-            .HasForeignKey(d => d.CategoryId)
-            .OnDelete(DeleteBehavior.SetNull);
-
         builder.HasOne(d => d.CurrentVersion)
             .WithMany()
             .HasForeignKey(d => d.CurrentVersionId)

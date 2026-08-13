@@ -20,6 +20,9 @@ public class FolderConfiguration : IEntityTypeConfiguration<Folder>
             .IsRequired()
             .HasMaxLength(2048);
 
+        builder.Property(f => f.Icon)
+            .HasMaxLength(64);
+
         builder.HasIndex(f => f.MaterializedPath);
         builder.HasIndex(f => f.ParentId);
 

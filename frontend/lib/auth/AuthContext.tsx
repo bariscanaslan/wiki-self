@@ -2,15 +2,22 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { fetchMe, login as loginApi, logout as logoutApi, refresh as refreshApi } from "../api/auth";
+import {
+  fetchMe,
+  login as loginApi,
+  logout as logoutApi,
+  refresh as refreshApi,
+  verifyTwoFactorLogin as verifyTwoFactorLoginApi,
+} from "../api/auth";
 import { clearTokens, getRefreshToken, loadPersistedRefreshToken, setTokens } from "./token-store";
-import type { LoginRequest, UserResponse } from "../types";
+import type { LoginRequest, LoginResult, UserResponse } from "../types";
 
 interface AuthContextValue {
   user: UserResponse | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (request: LoginRequest) => Promise<void>;
+  login: (request: LoginRequest) => Promise<LoginResult>;
+  completeTwoFactorLogin: (challengeToken: string, code: string) => Promise<void>;
   logout: () => Promise<void>;
   refetchMe: () => Promise<void>;
 }
@@ -59,7 +66,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (request: LoginRequest) => {
-    const response = await loginApi(request);
+    const result = await loginApi(request);
+    if (!result.requiresTwoFactor && result.tokens) {
+      setTokens(result.tokens.accessToken, result.tokens.refreshToken);
+      setUser(result.tokens.user);
+    }
+    return result;
+  }, []);
+
+  const completeTwoFactorLogin = useCallback(async (challengeToken: string, code: string) => {
+    const response = await verifyTwoFactorLoginApi({ challengeToken, code });
     setTokens(response.accessToken, response.refreshToken);
     setUser(response.user);
   }, []);
@@ -84,7 +100,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, isAuthenticated: Boolean(user), login, logout, refetchMe }}>
+    <AuthContext.Provider
+      value={{ user, isLoading, isAuthenticated: Boolean(user), login, completeTwoFactorLogin, logout, refetchMe }}
+    >
       {children}
     </AuthContext.Provider>
   );

@@ -3,8 +3,8 @@
 import { useState, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { Modal } from "@/components/ui/Modal";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 import { extractErrorMessage } from "@/lib/api/client";
 import { useDeleteUser } from "@/lib/api/users";
 import type { UserResponse } from "@/lib/types";
@@ -40,8 +40,7 @@ export function DeleteUserModal({ user, onClose }: { user: UserResponse | null; 
           <span className="font-medium text-zinc-900">{user?.displayName}</span> adlı kullanıcıyı kalıcı olarak silmek üzeresiniz. Bu
           işlem geri alınamaz. Onaylamak için kendi şifrenizi girin.
         </p>
-        <Input
-          type="password"
+        <PasswordInput
           label="Şifreniz"
           autoFocus
           value={password}

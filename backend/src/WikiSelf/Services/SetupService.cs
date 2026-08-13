@@ -74,7 +74,7 @@ public class SetupService : ISetupService
 
         await _db.SaveChangesAsync();
 
-        var userResponse = new UserResponse(admin.Id, admin.Email, admin.DisplayName, admin.IsAdmin, admin.IsActive, admin.CreatedAt, []);
+        var userResponse = new UserResponse(admin.Id, admin.Email, admin.DisplayName, admin.IsAdmin, admin.IsActive, admin.CreatedAt, [], false);
 
         var settingsResponse = new SiteSettingsResponse(
             settings.CompanyName,

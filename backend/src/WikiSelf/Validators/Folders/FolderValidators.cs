@@ -18,3 +18,11 @@ public class RenameFolderRequestValidator : AbstractValidator<RenameFolderReques
         RuleFor(x => x.Name).NotEmpty().MaximumLength(256);
     }
 }
+
+public class UpdateFolderIconRequestValidator : AbstractValidator<UpdateFolderIconRequest>
+{
+    public UpdateFolderIconRequestValidator()
+    {
+        RuleFor(x => x.Icon).NotEmpty().MaximumLength(64);
+    }
+}

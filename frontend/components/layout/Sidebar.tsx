@@ -1,28 +1,54 @@
+"use client";
+
 import { Suspense } from "react";
+import { useResizableWidth } from "../../lib/hooks/useResizableWidth";
 import { FolderTree } from "../folder-tree/FolderTree";
-import { CategoryFilterList } from "./CategoryFilterList";
+import { ImageGallerySection } from "./ImageGallerySection";
+import { TagFilterSection } from "./TagFilterSection";
 
 type SidebarProps = {
   isMobileOpen: boolean;
   onMobileClose: () => void;
 };
 
+const SIDEBAR_MIN_WIDTH = 240;
+const SIDEBAR_MAX_WIDTH = 480;
+const SIDEBAR_DEFAULT_WIDTH = 288;
+
 function SidebarContent() {
   return (
     <>
       <FolderTree />
       <Suspense fallback={null}>
-        <CategoryFilterList />
+        <TagFilterSection />
       </Suspense>
+      <ImageGallerySection />
     </>
   );
 }
 
 export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
+  const { width, startResize } = useResizableWidth({
+    storageKey: "wikiself.sidebarWidth",
+    defaultWidth: SIDEBAR_DEFAULT_WIDTH,
+    minWidth: SIDEBAR_MIN_WIDTH,
+    maxWidth: SIDEBAR_MAX_WIDTH,
+  });
+
   return (
     <>
-      <aside className="hidden w-72 shrink-0 overflow-y-auto border-r border-zinc-100 bg-white px-2 py-4 md:block">
+      <aside
+        className="relative hidden shrink-0 overflow-y-auto border-r border-zinc-100 bg-white px-2 py-4 md:block"
+        style={{ width }}
+      >
         <SidebarContent />
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          aria-label="Kenar çubuğu genişliğini ayarla"
+          onPointerDown={startResize}
+          className="absolute right-0 top-0 z-10 hidden h-full w-1 cursor-col-resize touch-none hover:bg-primary-300 md:block"
+        />
       </aside>
 
       {isMobileOpen && (

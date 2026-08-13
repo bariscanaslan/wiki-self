@@ -24,8 +24,8 @@ public class SearchController : ControllerBase
         [FromQuery] string? q = null,
         [FromQuery] int page = 1,
         [FromQuery] int pageSize = 20,
-        [FromQuery] Guid? categoryId = null)
+        [FromQuery] Guid? tagId = null)
     {
-        return Ok(await _searchService.SearchAsync(_currentUser.UserId, q ?? string.Empty, page, pageSize, categoryId));
+        return Ok(await _searchService.SearchAsync(_currentUser.UserId, q ?? string.Empty, page, pageSize, tagId));
     }
 }

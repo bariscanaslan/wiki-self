@@ -13,7 +13,6 @@ import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { EmptyState } from "../ui/EmptyState";
 import { FullPageSpinner } from "../ui/Spinner";
-import { CategorySelect } from "./CategorySelect";
 import { DocumentEditor, type DocumentEditorHandle } from "./editor/DocumentEditor";
 import { DocumentView } from "./DocumentView";
 import { ExportMenu } from "./export/ExportMenu";
@@ -152,7 +151,6 @@ export function DocumentPage({ documentId }: { documentId: string }) {
 
       {!isEditing && (
         <div className="mb-6 flex flex-wrap items-center gap-3">
-          <CategorySelect documentId={documentId} categoryId={document.categoryId} editable={editable} />
           <TagPicker documentId={documentId} tags={document.tags} editable={editable} />
         </div>
       )}

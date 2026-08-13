@@ -12,7 +12,6 @@ public interface IDocumentService
     Task<DocumentVersionDetailResponse> GetVersionAsync(Guid documentId, Guid versionId);
     Task<DocumentResponse> RestoreVersionAsync(Guid documentId, Guid versionId, Guid userId);
     Task<DocumentResponse> AssignTagsAsync(Guid documentId, Guid userId, AssignDocumentTagsRequest request);
-    Task<DocumentResponse> AssignCategoryAsync(Guid documentId, Guid userId, AssignDocumentCategoryRequest request);
     Task<DocumentResponse> MoveAsync(Guid documentId, Guid userId, MoveDocumentRequest request);
     Task DeleteAsync(Guid documentId, Guid userId);
     Task<ExportContentResponse> GetExportContentAsync(Guid documentId);

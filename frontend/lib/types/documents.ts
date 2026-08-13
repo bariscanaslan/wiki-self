@@ -5,7 +5,6 @@ export interface DocumentResponse {
   id: string;
   title: string;
   folderId: string;
-  categoryId: string | null;
   contentJson: string;
   contentMarkdown: string;
   versionNumber: number;
@@ -22,7 +21,6 @@ export interface CreateDocumentRequest {
   folderId: string;
   contentJson: string;
   contentMarkdown: string;
-  categoryId?: string | null;
   tagIds?: string[] | null;
 }
 
@@ -38,10 +36,6 @@ export interface MoveDocumentRequest {
 
 export interface AssignDocumentTagsRequest {
   tagIds: string[];
-}
-
-export interface AssignDocumentCategoryRequest {
-  categoryId?: string | null;
 }
 
 export interface DocumentVersionResponse {

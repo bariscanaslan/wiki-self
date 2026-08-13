@@ -1,7 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "./client";
 import { queryKeys } from "./queryKeys";
-import type { CreateFolderRequest, FolderResponse, FolderTreeNode, MoveFolderRequest, RenameFolderRequest } from "../types";
+import type {
+  CreateFolderRequest,
+  FolderResponse,
+  FolderTreeNode,
+  MoveFolderRequest,
+  RenameFolderRequest,
+  UpdateFolderIconRequest,
+} from "../types";
 
 async function getTree(): Promise<FolderTreeNode[]> {
   const response = await apiClient.get<FolderTreeNode[]>("/folders/tree");
@@ -25,6 +32,11 @@ async function moveFolder(id: string, request: MoveFolderRequest): Promise<Folde
 
 async function deleteFolder(id: string): Promise<void> {
   await apiClient.delete(`/folders/${id}`);
+}
+
+async function updateFolderIcon(id: string, request: UpdateFolderIconRequest): Promise<FolderResponse> {
+  const response = await apiClient.put<FolderResponse>(`/folders/${id}/icon`, request);
+  return response.data;
 }
 
 export function useFolderTree() {
@@ -59,6 +71,14 @@ export function useDeleteFolder() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteFolder,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.folderTree }),
+  });
+}
+
+export function useUpdateFolderIcon() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, request }: { id: string; request: UpdateFolderIconRequest }) => updateFolderIcon(id, request),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.folderTree }),
   });
 }

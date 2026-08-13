@@ -7,8 +7,8 @@ import { extractErrorMessage } from "../../../lib/api/client";
 import { useFolderTree } from "../../../lib/api/folders";
 import { countDocuments, downloadBlob, exportAllAsZip } from "../../../lib/export/exportAll";
 import { Button } from "../../ui/Button";
-import { Input } from "../../ui/Input";
 import { Modal } from "../../ui/Modal";
+import { PasswordInput } from "../../ui/PasswordInput";
 
 interface ExportAllModalProps {
   isOpen: boolean;
@@ -89,8 +89,7 @@ export function ExportAllModal({ isOpen, onClose }: ExportAllModalProps) {
             Tüm klasörler ve içerdikleri dokümanlar PDF olarak, klasör yapısı korunarak bir .zip dosyasında indirilecek. Devam etmek için
             şifrenizi girin.
           </p>
-          <Input
-            type="password"
+          <PasswordInput
             label="Şifre"
             autoFocus
             value={password}

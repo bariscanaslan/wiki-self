@@ -10,8 +10,6 @@ public class Document
     public Folder Folder { get; set; } = null!;
     public Guid? CurrentVersionId { get; set; }
     public DocumentVersion? CurrentVersion { get; set; }
-    public Guid? CategoryId { get; set; }
-    public Category? Category { get; set; }
     public DateTime CreatedAt { get; set; }
     public Guid CreatedByUserId { get; set; }
     public User CreatedByUser { get; set; } = null!;

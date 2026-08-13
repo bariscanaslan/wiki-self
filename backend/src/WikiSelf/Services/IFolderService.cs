@@ -8,5 +8,6 @@ public interface IFolderService
     Task<FolderResponse> CreateAsync(Guid userId, CreateFolderRequest request);
     Task<FolderResponse> RenameAsync(Guid folderId, RenameFolderRequest request);
     Task<FolderResponse> MoveAsync(Guid folderId, MoveFolderRequest request);
+    Task<FolderResponse> UpdateIconAsync(Guid folderId, UpdateFolderIconRequest request);
     Task DeleteAsync(Guid folderId);
 }

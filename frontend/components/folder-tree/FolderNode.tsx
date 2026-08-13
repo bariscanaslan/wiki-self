@@ -1,28 +1,72 @@
 "use client";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronRight, Folder, FolderOpen, MoreVertical } from "lucide-react";
+import { ChevronRight, MoreVertical } from "lucide-react";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { extractErrorMessage } from "../../lib/api/client";
+import { useMoveDocument } from "../../lib/api/documents";
 import { canEdit, canManage } from "../../lib/auth/permissions";
+import { getFolderIcon } from "../../lib/icons/folderIcons";
 import { cn } from "../../lib/utils/cn";
 import type { FolderTreeNode } from "../../lib/types";
 import { DropdownItem, DropdownMenu } from "../ui/DropdownMenu";
-import { DocumentLeaf } from "./DocumentLeaf";
+import { DOCUMENT_DRAG_MIME_TYPE, DocumentLeaf } from "./DocumentLeaf";
 import { useFolderTreeUI } from "./FolderTreeUIContext";
 
 export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: number }) {
   const [isExpanded, setIsExpanded] = useState(depth === 0);
+  const [isDragOver, setIsDragOver] = useState(false);
   const { openModal } = useFolderTreeUI();
+  const moveDocument = useMoveDocument();
 
   const hasChildren = node.children.length > 0 || node.documents.length > 0;
   const editable = canEdit(node.effectivePermission);
   const manageable = canManage(node.effectivePermission);
 
+  function handleDragOver(event: React.DragEvent) {
+    if (!editable || !event.dataTransfer.types.includes(DOCUMENT_DRAG_MIME_TYPE)) {
+      return;
+    }
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+    setIsDragOver(true);
+  }
+
+  function handleDragLeave() {
+    setIsDragOver(false);
+  }
+
+  async function handleDrop(event: React.DragEvent) {
+    setIsDragOver(false);
+    if (!editable) {
+      return;
+    }
+    const documentId = event.dataTransfer.getData(DOCUMENT_DRAG_MIME_TYPE);
+    if (!documentId) {
+      return;
+    }
+    event.preventDefault();
+
+    try {
+      await moveDocument.mutateAsync({ id: documentId, request: { folderId: node.id } });
+    } catch (error) {
+      toast.error(extractErrorMessage(error));
+    }
+  }
+
   return (
     <div>
       <div
-        className="group flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-zinc-700 hover:bg-zinc-100"
+        className={cn(
+          "group flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-zinc-700 hover:bg-zinc-100",
+          isDragOver && "bg-primary-50 ring-2 ring-inset ring-primary-300",
+        )}
         style={{ paddingLeft: `${depth * 16 + 8}px` }}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
         <button
           type="button"
@@ -39,11 +83,10 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
           onClick={() => setIsExpanded((prev) => !prev)}
           className="flex flex-1 items-center gap-2 truncate text-left"
         >
-          {isExpanded ? (
-            <FolderOpen size={16} className="shrink-0 text-primary-500" />
-          ) : (
-            <Folder size={16} className="shrink-0 text-zinc-400" />
-          )}
+          <FontAwesomeIcon
+            icon={getFolderIcon(node.icon, isExpanded)}
+            className={cn("h-4 w-4 shrink-0", isExpanded ? "text-primary-500" : "text-zinc-400")}
+          />
           <span className="truncate font-medium">{node.name}</span>
         </button>
 
@@ -66,6 +109,7 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
               <DropdownItem onClick={() => openModal({ type: "createFolder", parent: node })}>Yeni Alt Klasör</DropdownItem>
             )}
             {manageable && <DropdownItem onClick={() => openModal({ type: "rename", folder: node })}>Yeniden Adlandır</DropdownItem>}
+            {manageable && <DropdownItem onClick={() => openModal({ type: "icon", folder: node })}>Simge Değiştir</DropdownItem>}
             {manageable && <DropdownItem onClick={() => openModal({ type: "move", folder: node })}>Taşı</DropdownItem>}
             {manageable && (
               <DropdownItem danger onClick={() => openModal({ type: "delete", folder: node })}>

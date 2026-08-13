@@ -1,11 +1,11 @@
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
-import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import type { AnyExtension, Editor } from "@tiptap/core";
 import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
 import { Markdown } from "tiptap-markdown";
+import { ImageWithFallback } from "./ImageWithFallback";
 
 const lowlight = createLowlight(common);
 
@@ -13,7 +13,7 @@ export function createTiptapExtensions(placeholderText?: string): AnyExtension[]
   return [
     StarterKit.configure({ codeBlock: false, link: false }),
     CodeBlockLowlight.configure({ lowlight }),
-    Image.configure({ HTMLAttributes: { class: "rounded-lg" } }),
+    ImageWithFallback.configure({ HTMLAttributes: { class: "rounded-lg" } }),
     Link.configure({
       openOnClick: false,
       autolink: true,

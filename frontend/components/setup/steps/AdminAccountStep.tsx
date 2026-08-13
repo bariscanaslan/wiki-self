@@ -2,6 +2,7 @@
 
 import { useFormContext } from "react-hook-form";
 import { Input } from "../../ui/Input";
+import { PasswordInput } from "../../ui/PasswordInput";
 import type { SetupFormValues } from "../SetupWizard";
 
 export function AdminAccountStep() {
@@ -14,16 +15,14 @@ export function AdminAccountStep() {
     <div className="flex flex-col gap-4">
       <Input label="Ad Soyad" placeholder="Ör. Barış Can Aslan" error={errors.adminDisplayName?.message} {...register("adminDisplayName")} />
       <Input label="E-posta" type="email" placeholder="admin@sirket.com" error={errors.adminEmail?.message} {...register("adminEmail")} />
-      <Input
+      <PasswordInput
         label="Şifre"
-        type="password"
         placeholder="En az 8 karakter"
         error={errors.adminPassword?.message}
         {...register("adminPassword")}
       />
-      <Input
+      <PasswordInput
         label="Şifre (Tekrar)"
-        type="password"
         error={errors.adminPasswordConfirm?.message}
         {...register("adminPasswordConfirm")}
       />

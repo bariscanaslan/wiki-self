@@ -4,9 +4,9 @@ export interface DocumentSummary {
   id: string;
   title: string;
   folderId: string;
-  categoryId: string | null;
   createdAt: string;
   updatedAt: string;
+  effectivePermission: PermissionLevel | null;
 }
 
 export interface FolderResponse {
@@ -14,6 +14,7 @@ export interface FolderResponse {
   name: string;
   parentId: string | null;
   materializedPath: string;
+  icon: string | null;
   createdAt: string;
   effectivePermission: PermissionLevel | null;
 }
@@ -23,6 +24,7 @@ export interface FolderTreeNode {
   name: string;
   parentId: string | null;
   materializedPath: string;
+  icon: string | null;
   createdAt: string;
   effectivePermission: PermissionLevel | null;
   children: FolderTreeNode[];
@@ -40,4 +42,8 @@ export interface RenameFolderRequest {
 
 export interface MoveFolderRequest {
   newParentId?: string | null;
+}
+
+export interface UpdateFolderIconRequest {
+  icon: string;
 }
