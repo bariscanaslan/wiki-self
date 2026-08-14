@@ -3,10 +3,11 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, MoreVertical } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../lib/api/client";
 import { useMoveDocument } from "../../lib/api/documents";
+import { useMoveFolder } from "../../lib/api/folders";
 import { canEdit, canManage } from "../../lib/auth/permissions";
 import { getFolderIcon } from "../../lib/icons/folderIcons";
 import { cn } from "../../lib/utils/cn";
@@ -16,18 +17,23 @@ import { DropdownItem, DropdownMenu } from "../ui/DropdownMenu";
 import { DOCUMENT_DRAG_MIME_TYPE, DocumentLeaf } from "./DocumentLeaf";
 import { useFolderTreeUI } from "./FolderTreeUIContext";
 
+export const FOLDER_DRAG_MIME_TYPE = "application/x-wikiself-folder-id";
+
 export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: number }) {
   const [isExpanded, setIsExpanded] = useState(depth === 0);
   const [isDragOver, setIsDragOver] = useState(false);
   const [contextMenuPoint, setContextMenuPoint] = useState<{ x: number; y: number } | null>(null);
   const { openModal, collapseSignal } = useFolderTreeUI();
   const moveDocument = useMoveDocument();
+  const moveFolder = useMoveFolder();
 
-  useEffect(() => {
-    if (collapseSignal > 0) {
+  const [lastCollapseSignal, setLastCollapseSignal] = useState(collapseSignal);
+  if (collapseSignal !== lastCollapseSignal) {
+    setLastCollapseSignal(collapseSignal);
+    if (isExpanded) {
       setIsExpanded(false);
     }
-  }, [collapseSignal]);
+  }
 
   const hasChildren = node.children.length > 0 || node.documents.length > 0;
   const editable = canEdit(node.effectivePermission);
@@ -59,8 +65,19 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
     );
   }
 
+  function handleFolderDragStart(event: React.DragEvent) {
+    if (!manageable) {
+      return;
+    }
+    event.dataTransfer.setData(FOLDER_DRAG_MIME_TYPE, node.id);
+    event.dataTransfer.effectAllowed = "move";
+  }
+
   function handleDragOver(event: React.DragEvent) {
-    if (!editable || !event.dataTransfer.types.includes(DOCUMENT_DRAG_MIME_TYPE)) {
+    const types = event.dataTransfer.types;
+    const acceptsDocument = editable && types.includes(DOCUMENT_DRAG_MIME_TYPE);
+    const acceptsFolder = manageable && types.includes(FOLDER_DRAG_MIME_TYPE);
+    if (!acceptsDocument && !acceptsFolder) {
       return;
     }
     event.preventDefault();
@@ -74,6 +91,25 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
 
   async function handleDrop(event: React.DragEvent) {
     setIsDragOver(false);
+
+    const draggedFolderId = event.dataTransfer.getData(FOLDER_DRAG_MIME_TYPE);
+    if (draggedFolderId) {
+      if (!manageable) {
+        return;
+      }
+      event.preventDefault();
+      if (draggedFolderId === node.id) {
+        return;
+      }
+      try {
+        await moveFolder.mutateAsync({ id: draggedFolderId, request: { newParentId: node.id } });
+        toast.success("Klasör taşındı");
+      } catch (error) {
+        toast.error(extractErrorMessage(error));
+      }
+      return;
+    }
+
     if (!editable) {
       return;
     }
@@ -98,6 +134,8 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
           isDragOver && "bg-primary-50 ring-2 ring-inset ring-primary-300",
         )}
         style={{ paddingLeft: `${depth * 16 + 8}px` }}
+        draggable={manageable}
+        onDragStart={handleFolderDragStart}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
