@@ -8,6 +8,7 @@ import { useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../lib/api/client";
 import { useDeleteDocument, useDocument, useSaveDocument } from "../../lib/api/documents";
+import { useFolderPathMap } from "../../lib/api/folders";
 import { canEdit, canManage } from "../../lib/auth/permissions";
 import { cn } from "../../lib/utils/cn";
 import { Button } from "../ui/Button";
@@ -23,6 +24,7 @@ import { VersionHistoryModal } from "./VersionHistoryModal";
 export function DocumentPage({ documentId }: { documentId: string }) {
   const router = useRouter();
   const { data: document, isLoading, isError, error } = useDocument(documentId);
+  const folderPathMap = useFolderPathMap();
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState("");
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
@@ -67,6 +69,7 @@ export function DocumentPage({ documentId }: { documentId: string }) {
 
   const editable = canEdit(document.effectivePermission);
   const manageable = canManage(document.effectivePermission);
+  const folderPath = folderPathMap.get(document.folderId);
 
   function startEditing() {
     setTitle(document!.title);
@@ -149,6 +152,8 @@ export function DocumentPage({ documentId }: { documentId: string }) {
           )}
         </div>
       </div>
+
+      {folderPath && <p className="-mt-4 mb-6 truncate text-sm text-zinc-400">{folderPath}/{document.title}</p>}
 
       {!isEditing && (
         <div className="mb-6 flex flex-wrap items-center gap-3">
