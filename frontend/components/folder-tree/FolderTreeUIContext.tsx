@@ -17,15 +17,26 @@ interface FolderTreeUIContextValue {
   modal: ModalState;
   openModal: (modal: NonNullable<ModalState>) => void;
   closeModal: () => void;
+  collapseSignal: number;
+  collapseAll: () => void;
 }
 
 const FolderTreeUIContext = createContext<FolderTreeUIContextValue | undefined>(undefined);
 
 export function FolderTreeUIProvider({ children }: { children: ReactNode }) {
   const [modal, setModal] = useState<ModalState>(null);
+  const [collapseSignal, setCollapseSignal] = useState(0);
 
   return (
-    <FolderTreeUIContext.Provider value={{ modal, openModal: setModal, closeModal: () => setModal(null) }}>
+    <FolderTreeUIContext.Provider
+      value={{
+        modal,
+        openModal: setModal,
+        closeModal: () => setModal(null),
+        collapseSignal,
+        collapseAll: () => setCollapseSignal((prev) => prev + 1),
+      }}
+    >
       {children}
     </FolderTreeUIContext.Provider>
   );

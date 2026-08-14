@@ -29,7 +29,7 @@ export function CodeBlockComponent({ node }: ReactNodeViewProps) {
         contentEditable={false}
         title="Kodu kopyala"
         aria-label="Kodu kopyala"
-        className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-md border border-zinc-700 bg-zinc-800/80 text-zinc-300 opacity-0 transition-opacity hover:bg-zinc-700 hover:text-white group-hover:opacity-100"
+        className="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-md border border-zinc-300 bg-white/80 text-zinc-500 opacity-0 transition-opacity hover:bg-zinc-100 hover:text-zinc-900 group-hover:opacity-100"
       >
         {copied ? <Check size={14} /> : <Copy size={14} />}
       </button>

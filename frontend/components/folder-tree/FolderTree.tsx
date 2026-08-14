@@ -1,6 +1,6 @@
 "use client";
 
-import { FolderPlus, PackageOpen } from "lucide-react";
+import { ChevronsDownUp, FolderPlus, PackageOpen } from "lucide-react";
 import { useFolderTree } from "../../lib/api/folders";
 import { useAuth } from "../../lib/auth/AuthContext";
 import { EmptyState } from "../ui/EmptyState";
@@ -18,22 +18,33 @@ import { RenameFolderModal } from "./modals/RenameFolderModal";
 function FolderTreeInner() {
   const { data: tree, isLoading } = useFolderTree();
   const { user } = useAuth();
-  const { modal, openModal, closeModal } = useFolderTreeUI();
+  const { modal, openModal, closeModal, collapseAll } = useFolderTreeUI();
 
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between px-2 pb-2">
         <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Klasörler</span>
-        {user?.isAdmin && (
+        <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={() => openModal({ type: "createFolder", parent: null })}
+            onClick={collapseAll}
             className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-primary-600"
-            aria-label="Yeni klasör"
+            aria-label="Tüm klasörleri kapat"
+            title="Tüm klasörleri kapat"
           >
-            <FolderPlus size={16} />
+            <ChevronsDownUp size={16} />
           </button>
-        )}
+          {user?.isAdmin && (
+            <button
+              type="button"
+              onClick={() => openModal({ type: "createFolder", parent: null })}
+              className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-primary-600"
+              aria-label="Yeni klasör"
+            >
+              <FolderPlus size={16} />
+            </button>
+          )}
+        </div>
       </div>
 
       {isLoading && (

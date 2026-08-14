@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, MoreVertical } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../lib/api/client";
 import { useMoveDocument } from "../../lib/api/documents";
@@ -20,8 +20,14 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
   const [isExpanded, setIsExpanded] = useState(depth === 0);
   const [isDragOver, setIsDragOver] = useState(false);
   const [contextMenuPoint, setContextMenuPoint] = useState<{ x: number; y: number } | null>(null);
-  const { openModal } = useFolderTreeUI();
+  const { openModal, collapseSignal } = useFolderTreeUI();
   const moveDocument = useMoveDocument();
+
+  useEffect(() => {
+    if (collapseSignal > 0) {
+      setIsExpanded(false);
+    }
+  }, [collapseSignal]);
 
   const hasChildren = node.children.length > 0 || node.documents.length > 0;
   const editable = canEdit(node.effectivePermission);
