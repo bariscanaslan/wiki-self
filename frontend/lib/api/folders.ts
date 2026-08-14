@@ -1,6 +1,8 @@
+import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiClient } from "./client";
 import { queryKeys } from "./queryKeys";
+import { buildFolderPathMap } from "../utils/folderPath";
 import type {
   CreateFolderRequest,
   FolderResponse,
@@ -41,6 +43,12 @@ async function updateFolderIcon(id: string, request: UpdateFolderIconRequest): P
 
 export function useFolderTree() {
   return useQuery({ queryKey: queryKeys.folderTree, queryFn: getTree });
+}
+
+/** Maps folderId -> full "Root/Child/Grandchild" path, built from the cached folder tree. */
+export function useFolderPathMap(): Map<string, string> {
+  const { data: tree } = useFolderTree();
+  return useMemo(() => buildFolderPathMap(tree ?? []), [tree]);
 }
 
 export function useCreateFolder() {

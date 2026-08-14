@@ -5,6 +5,7 @@ import { FileText, Loader2, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useFolderPathMap } from "../../lib/api/folders";
 import { useSearch } from "../../lib/api/search";
 import { useDebouncedValue } from "../../lib/hooks/useDebouncedValue";
 
@@ -16,6 +17,7 @@ export function SearchBox() {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { data, isFetching } = useSearch(debouncedQuery, 1, 6);
+  const folderPathMap = useFolderPathMap();
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -67,20 +69,26 @@ export function SearchBox() {
             )}
             {!isFetching && data?.results.length === 0 && <p className="px-3 py-6 text-center text-sm text-zinc-400">Sonuç bulunamadı</p>}
             {!isFetching &&
-              data?.results.map((result) => (
-                <Link
-                  key={result.documentId}
-                  href={`/documents/${result.documentId}`}
-                  onClick={() => setIsFocused(false)}
-                  className="flex items-start gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-zinc-50"
-                >
-                  <FileText size={15} className="mt-0.5 shrink-0 text-primary-500" />
-                  <div className="min-w-0">
-                    <p className="truncate font-medium text-zinc-900">{result.title}</p>
-                    <p className="truncate text-xs text-zinc-500">{result.snippet}</p>
-                  </div>
-                </Link>
-              ))}
+              data?.results.map((result) => {
+                const folderPath = folderPathMap.get(result.folderId);
+                return (
+                  <Link
+                    key={result.documentId}
+                    href={`/documents/${result.documentId}`}
+                    onClick={() => setIsFocused(false)}
+                    className="flex items-start gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-zinc-50"
+                  >
+                    <FileText size={15} className="mt-0.5 shrink-0 text-primary-500" />
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-zinc-900">{result.title}</p>
+                      <p className="truncate text-xs text-zinc-400">
+                        {folderPath ? `${folderPath}/${result.title}` : result.title}
+                      </p>
+                      <p className="truncate text-xs text-zinc-500">{result.snippet}</p>
+                    </div>
+                  </Link>
+                );
+              })}
             {data && data.results.length > 0 && (
               <Link
                 href={`/search?q=${encodeURIComponent(debouncedQuery)}`}

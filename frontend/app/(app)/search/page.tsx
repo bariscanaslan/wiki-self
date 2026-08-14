@@ -9,6 +9,7 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Spinner } from "@/components/ui/Spinner";
 import { useTags } from "@/lib/api/tags";
 import { useSearch } from "@/lib/api/search";
+import { useFolderPathMap } from "@/lib/api/folders";
 
 const PAGE_SIZE = 20;
 
@@ -23,6 +24,7 @@ function SearchResultsContent() {
   const tagName = tagId ? tags?.find((tag) => tag.id === tagId)?.name : undefined;
 
   const { data, isLoading, isFetching } = useSearch(query, page, PAGE_SIZE, tagId);
+  const folderPathMap = useFolderPathMap();
 
   function goToPage(nextPage: number) {
     const params = new URLSearchParams(searchParams.toString());
@@ -64,21 +66,27 @@ function SearchResultsContent() {
       <div className="flex flex-col gap-3">
         {!isLoading &&
           !isFetching &&
-          data?.results.map((result) => (
-            <Link
-              key={result.documentId}
-              href={`/documents/${result.documentId}`}
-              className="rounded-xl border border-zinc-100 bg-white p-4 transition-colors hover:border-primary-200 hover:bg-primary-50/40"
-            >
-              <div className="flex items-start gap-3">
-                <FileText size={18} className="mt-0.5 shrink-0 text-primary-500" />
-                <div>
-                  <h2 className="font-semibold text-zinc-900">{result.title}</h2>
-                  <p className="mt-1 text-sm text-zinc-500">{result.snippet}</p>
+          data?.results.map((result) => {
+            const folderPath = folderPathMap.get(result.folderId);
+            return (
+              <Link
+                key={result.documentId}
+                href={`/documents/${result.documentId}`}
+                className="rounded-xl border border-zinc-100 bg-white p-4 transition-colors hover:border-primary-200 hover:bg-primary-50/40"
+              >
+                <div className="flex items-start gap-3">
+                  <FileText size={18} className="mt-0.5 shrink-0 text-primary-500" />
+                  <div className="min-w-0">
+                    <h2 className="font-semibold text-zinc-900">{result.title}</h2>
+                    <p className="mt-0.5 truncate text-xs text-zinc-400">
+                      {folderPath ? `${folderPath}/${result.title}` : result.title}
+                    </p>
+                    <p className="mt-1 text-sm text-zinc-500">{result.snippet}</p>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
       </div>
 
       {data && totalPages > 1 && (
