@@ -23,12 +23,14 @@ public class AuthService : IAuthService
 
     private readonly AppDbContext _db;
     private readonly IJwtTokenService _jwtTokenService;
+    private readonly ITurnstileService _turnstileService;
     private readonly JwtSettings _jwtSettings;
 
-    public AuthService(AppDbContext db, IJwtTokenService jwtTokenService, IOptions<JwtSettings> jwtSettings)
+    public AuthService(AppDbContext db, IJwtTokenService jwtTokenService, ITurnstileService turnstileService, IOptions<JwtSettings> jwtSettings)
     {
         _db = db;
         _jwtTokenService = jwtTokenService;
+        _turnstileService = turnstileService;
         _jwtSettings = jwtSettings.Value;
     }
 
@@ -66,6 +68,11 @@ public class AuthService : IAuthService
 
     public async Task<LoginResult> LoginAsync(LoginRequest request)
     {
+        if (!await _turnstileService.VerifyAsync(request.TurnstileToken))
+        {
+            throw new UnauthorizedAppException("Turnstile verification failed.");
+        }
+
         var user = await _db.Users
             .Include(u => u.UserGroups).ThenInclude(ug => ug.Group)
             .FirstOrDefaultAsync(u => u.Email == request.Email);

@@ -2,7 +2,7 @@ using WikiSelf.DTOs.Users;
 
 namespace WikiSelf.DTOs.Auth;
 
-public record LoginRequest(string Email, string Password);
+public record LoginRequest(string Email, string Password, string? TurnstileToken = null);
 
 public record LoginResponse(string AccessToken, string RefreshToken, DateTime AccessTokenExpiresAt, UserResponse User);
 

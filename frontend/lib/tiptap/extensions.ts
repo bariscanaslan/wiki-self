@@ -2,17 +2,25 @@ import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
 import type { AnyExtension, Editor } from "@tiptap/core";
+import { ReactNodeViewRenderer } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { common, createLowlight } from "lowlight";
 import { Markdown } from "tiptap-markdown";
+import { CodeBlockComponent } from "../../components/documents/editor/CodeBlockComponent";
 import { ImageWithFallback } from "./ImageWithFallback";
 
 const lowlight = createLowlight(common);
 
+const CodeBlockWithCopy = CodeBlockLowlight.extend({
+  addNodeView() {
+    return ReactNodeViewRenderer(CodeBlockComponent);
+  },
+});
+
 export function createTiptapExtensions(placeholderText?: string): AnyExtension[] {
   return [
     StarterKit.configure({ codeBlock: false, link: false }),
-    CodeBlockLowlight.configure({ lowlight }),
+    CodeBlockWithCopy.configure({ lowlight }),
     ImageWithFallback.configure({ HTMLAttributes: { class: "rounded-lg" } }),
     Link.configure({
       openOnClick: false,

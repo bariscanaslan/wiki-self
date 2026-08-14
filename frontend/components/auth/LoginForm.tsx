@@ -1,12 +1,14 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { z } from "zod";
+import { usePublicConfig } from "../../lib/api/config";
 import { extractErrorMessage, resolveAssetUrl } from "../../lib/api/client";
 import { useAuth } from "../../lib/auth/AuthContext";
 import { useSiteSettings } from "../../lib/settings/SettingsContext";
@@ -25,9 +27,11 @@ export function LoginForm() {
   const router = useRouter();
   const { login, completeTwoFactorLogin } = useAuth();
   const { settings } = useSiteSettings();
+  const { data: publicConfig } = usePublicConfig();
   const [challengeToken, setChallengeToken] = useState<string | null>(null);
   const [code, setCode] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const {
     register,
     handleSubmit,
@@ -35,10 +39,11 @@ export function LoginForm() {
   } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) });
 
   const logoUrl = resolveAssetUrl(settings?.logoUrl);
+  const turnstileEnabled = publicConfig?.turnstileEnabled ?? false;
 
   async function onSubmit(values: LoginFormValues) {
     try {
-      const result = await login(values);
+      const result = await login({ ...values, turnstileToken: turnstileToken ?? undefined });
       if (result.requiresTwoFactor && result.challengeToken) {
         setChallengeToken(result.challengeToken);
         return;
@@ -115,7 +120,21 @@ export function LoginForm() {
           <form key="credentials" onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <Input label="E-posta" type="email" placeholder="you@company.com" error={errors.email?.message} {...register("email")} />
             <PasswordInput label="Şifre" placeholder="••••••••" error={errors.password?.message} {...register("password")} />
-            <Button type="submit" isLoading={isSubmitting} className="mt-2 w-full">
+            {turnstileEnabled && publicConfig ? (
+              <Turnstile
+                siteKey={publicConfig.turnstileSiteKey}
+                onSuccess={setTurnstileToken}
+                onExpire={() => setTurnstileToken(null)}
+                onError={() => setTurnstileToken(null)}
+                className="mx-auto"
+              />
+            ) : null}
+            <Button
+              type="submit"
+              isLoading={isSubmitting}
+              disabled={turnstileEnabled && !turnstileToken}
+              className="mt-2 w-full"
+            >
               Giriş Yap
             </Button>
           </form>

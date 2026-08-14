@@ -8,5 +8,6 @@ export * from "./documents";
 export * from "./search";
 export * from "./tags";
 export * from "./settings";
+export * from "./config";
 export * from "./audit";
 export * from "./setup";

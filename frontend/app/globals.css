@@ -112,6 +112,66 @@ body {
   font-size: 0.875em;
 }
 
+.document-content .hljs-comment,
+.document-content .hljs-quote {
+  color: #7f848e;
+  font-style: italic;
+}
+
+.document-content .hljs-keyword,
+.document-content .hljs-selector-tag,
+.document-content .hljs-doctag,
+.document-content .hljs-formula {
+  color: #c678dd;
+}
+
+.document-content .hljs-string,
+.document-content .hljs-regexp,
+.document-content .hljs-addition,
+.document-content .hljs-deletion {
+  color: #98c379;
+}
+
+.document-content .hljs-number,
+.document-content .hljs-literal {
+  color: #d19a66;
+}
+
+.document-content .hljs-title,
+.document-content .hljs-title.function_,
+.document-content .hljs-section,
+.document-content .hljs-selector-id,
+.document-content .hljs-built_in,
+.document-content .hljs-builtin-name {
+  color: #61afef;
+}
+
+.document-content .hljs-variable,
+.document-content .hljs-template-variable,
+.document-content .hljs-attr,
+.document-content .hljs-attribute,
+.document-content .hljs-tag,
+.document-content .hljs-name {
+  color: #e06c75;
+}
+
+.document-content .hljs-type,
+.document-content .hljs-class .hljs-title,
+.document-content .hljs-symbol,
+.document-content .hljs-bullet,
+.document-content .hljs-link,
+.document-content .hljs-meta {
+  color: #e5c07b;
+}
+
+.document-content .hljs-emphasis {
+  font-style: italic;
+}
+
+.document-content .hljs-strong {
+  font-weight: 700;
+}
+
 .document-content p code,
 .document-content li code {
   background: #f4f4f5;

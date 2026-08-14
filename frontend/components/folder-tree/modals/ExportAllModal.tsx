@@ -1,11 +1,12 @@
 "use client";
 
+import { FileText } from "lucide-react";
 import { useState, type FormEvent } from "react";
 import toast from "react-hot-toast";
 import { verifyPassword } from "../../../lib/api/auth";
 import { extractErrorMessage } from "../../../lib/api/client";
 import { useFolderTree } from "../../../lib/api/folders";
-import { countDocuments, downloadBlob, exportAllAsZip } from "../../../lib/export/exportAll";
+import { countDocuments, downloadBlob, exportAllAsZip, type ExportAllFormat } from "../../../lib/export/exportAll";
 import { Button } from "../../ui/Button";
 import { Modal } from "../../ui/Modal";
 import { PasswordInput } from "../../ui/PasswordInput";
@@ -17,9 +18,12 @@ interface ExportAllModalProps {
 
 type Phase = "password" | "exporting";
 
+const FORMAT_LABELS: Record<ExportAllFormat, string> = { pdf: "PDF", markdown: "Markdown" };
+
 export function ExportAllModal({ isOpen, onClose }: ExportAllModalProps) {
   const { data: tree } = useFolderTree();
   const [phase, setPhase] = useState<Phase>("password");
+  const [format, setFormat] = useState<ExportAllFormat>("pdf");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(false);
@@ -27,6 +31,7 @@ export function ExportAllModal({ isOpen, onClose }: ExportAllModalProps) {
 
   function reset() {
     setPhase("password");
+    setFormat("pdf");
     setPassword("");
     setError(null);
     setIsVerifying(false);
@@ -70,8 +75,8 @@ export function ExportAllModal({ isOpen, onClose }: ExportAllModalProps) {
     setProgress({ done: 0, total });
 
     try {
-      const blob = await exportAllAsZip(nodes, (done, docTotal) => setProgress({ done, total: docTotal }));
-      downloadBlob(blob, "wiki-export.zip");
+      const blob = await exportAllAsZip(nodes, format, (done, docTotal) => setProgress({ done, total: docTotal }));
+      downloadBlob(blob, `wiki-export-${format}.zip`);
       toast.success("Dışa aktarma tamamlandı");
       reset();
       onClose();
@@ -85,9 +90,23 @@ export function ExportAllModal({ isOpen, onClose }: ExportAllModalProps) {
     <Modal isOpen={isOpen} onClose={handleClose} title="Tümünü Dışa Aktar" size="sm">
       {phase === "password" && (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex gap-2">
+            {(Object.keys(FORMAT_LABELS) as ExportAllFormat[]).map((option) => (
+              <Button
+                key={option}
+                type="button"
+                variant={format === option ? "primary" : "outline"}
+                className="flex-1"
+                disabled={isVerifying}
+                onClick={() => setFormat(option)}
+              >
+                <FileText size={16} /> {FORMAT_LABELS[option]}
+              </Button>
+            ))}
+          </div>
           <p className="text-sm text-zinc-600">
-            Tüm klasörler ve içerdikleri dokümanlar PDF olarak, klasör yapısı korunarak bir .zip dosyasında indirilecek. Devam etmek için
-            şifrenizi girin.
+            Tüm klasörler ve içerdikleri dokümanlar {FORMAT_LABELS[format]} olarak, klasör yapısı korunarak bir .zip dosyasında
+            indirilecek. Devam etmek için şifrenizi girin.
           </p>
           <PasswordInput
             label="Şifre"
@@ -110,7 +129,7 @@ export function ExportAllModal({ isOpen, onClose }: ExportAllModalProps) {
 
       {phase === "exporting" && (
         <div className="flex flex-col gap-4">
-          <p className="text-sm text-zinc-600">Dokümanlar PDF&apos;e dönüştürülüyor, lütfen bekleyin...</p>
+          <p className="text-sm text-zinc-600">Dokümanlar {FORMAT_LABELS[format]} olarak hazırlanıyor, lütfen bekleyin...</p>
           <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-100">
             <div
               className="h-full rounded-full bg-primary-600 transition-all"

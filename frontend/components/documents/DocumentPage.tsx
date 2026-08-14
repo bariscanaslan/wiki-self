@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../lib/api/client";
 import { useDeleteDocument, useDocument, useSaveDocument } from "../../lib/api/documents";
 import { canEdit, canManage } from "../../lib/auth/permissions";
+import { cn } from "../../lib/utils/cn";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { EmptyState } from "../ui/EmptyState";
@@ -102,7 +103,7 @@ export function DocumentPage({ documentId }: { documentId: string }) {
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-8">
+    <div className={cn("mx-auto px-6 py-8", isEditing ? "max-w-6xl" : "max-w-4xl")}>
       <div className="mb-6 flex items-start justify-between gap-4">
         {isEditing ? (
           <input

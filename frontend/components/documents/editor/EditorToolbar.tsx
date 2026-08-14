@@ -24,9 +24,10 @@ import { LinkPopover } from "./LinkPopover";
 
 interface EditorToolbarProps {
   editor: Editor;
-  documentId: string;
   mode: "wysiwyg" | "markdown";
   onToggleMode: () => void;
+  onImageSelect: (file: File) => void;
+  isUploadingImage?: boolean;
 }
 
 function ToolbarButton({
@@ -59,7 +60,7 @@ function ToolbarButton({
   );
 }
 
-export function EditorToolbar({ editor, documentId, mode, onToggleMode }: EditorToolbarProps) {
+export function EditorToolbar({ editor, mode, onToggleMode, onImageSelect, isUploadingImage }: EditorToolbarProps) {
   const isMarkdownMode = mode === "markdown";
 
   return (
@@ -144,7 +145,7 @@ export function EditorToolbar({ editor, documentId, mode, onToggleMode }: Editor
       <div className="mx-1 h-5 w-px bg-zinc-200" />
 
       <LinkPopover editor={editor} disabled={isMarkdownMode} />
-      <ImageUploadButton editor={editor} documentId={documentId} disabled={isMarkdownMode} />
+      <ImageUploadButton onSelect={onImageSelect} isUploading={isUploadingImage} />
 
       <div className="mx-1 h-5 w-px bg-zinc-200" />
 

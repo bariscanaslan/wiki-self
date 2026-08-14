@@ -3,6 +3,7 @@ import type { UserResponse } from "./users";
 export interface LoginRequest {
   email: string;
   password: string;
+  turnstileToken?: string;
 }
 
 export interface LoginResponse {

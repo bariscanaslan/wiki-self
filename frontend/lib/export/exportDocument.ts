@@ -26,9 +26,9 @@ export async function exportDocument(documentId: string, format: ExportFormat): 
   } else {
     const { default: jsPDF } = await import("jspdf");
     const pdf = new jsPDF({ unit: "pt", format: "a4" });
-    await embedPdfFonts(pdf);
+    const fontFamily = await embedPdfFonts(pdf, content.documentFont);
     const parsedDoc = parseDocumentJson(content.contentJson) as unknown as TiptapNode;
-    await renderTiptapDocumentToPdf(pdf, parsedDoc);
+    await renderTiptapDocumentToPdf(pdf, parsedDoc, fontFamily);
     pdf.save(`${fileName}.pdf`);
   }
 

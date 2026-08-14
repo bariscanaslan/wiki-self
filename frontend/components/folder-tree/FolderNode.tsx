@@ -11,6 +11,7 @@ import { canEdit, canManage } from "../../lib/auth/permissions";
 import { getFolderIcon } from "../../lib/icons/folderIcons";
 import { cn } from "../../lib/utils/cn";
 import type { FolderTreeNode } from "../../lib/types";
+import { ContextMenu } from "../ui/ContextMenu";
 import { DropdownItem, DropdownMenu } from "../ui/DropdownMenu";
 import { DOCUMENT_DRAG_MIME_TYPE, DocumentLeaf } from "./DocumentLeaf";
 import { useFolderTreeUI } from "./FolderTreeUIContext";
@@ -18,12 +19,39 @@ import { useFolderTreeUI } from "./FolderTreeUIContext";
 export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: number }) {
   const [isExpanded, setIsExpanded] = useState(depth === 0);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [contextMenuPoint, setContextMenuPoint] = useState<{ x: number; y: number } | null>(null);
   const { openModal } = useFolderTreeUI();
   const moveDocument = useMoveDocument();
 
   const hasChildren = node.children.length > 0 || node.documents.length > 0;
   const editable = canEdit(node.effectivePermission);
   const manageable = canManage(node.effectivePermission);
+  const hasMenu = editable || manageable;
+
+  function handleContextMenu(event: React.MouseEvent) {
+    if (!hasMenu) {
+      return;
+    }
+    event.preventDefault();
+    setContextMenuPoint({ x: event.clientX, y: event.clientY });
+  }
+
+  function renderMenuItems() {
+    return (
+      <>
+        {editable && <DropdownItem onClick={() => openModal({ type: "createDocument", parent: node })}>Yeni Doküman</DropdownItem>}
+        {manageable && <DropdownItem onClick={() => openModal({ type: "createFolder", parent: node })}>Yeni Alt Klasör</DropdownItem>}
+        {manageable && <DropdownItem onClick={() => openModal({ type: "rename", folder: node })}>Yeniden Adlandır</DropdownItem>}
+        {manageable && <DropdownItem onClick={() => openModal({ type: "icon", folder: node })}>Simge Değiştir</DropdownItem>}
+        {manageable && <DropdownItem onClick={() => openModal({ type: "move", folder: node })}>Taşı</DropdownItem>}
+        {manageable && (
+          <DropdownItem danger onClick={() => openModal({ type: "delete", folder: node })}>
+            Sil
+          </DropdownItem>
+        )}
+      </>
+    );
+  }
 
   function handleDragOver(event: React.DragEvent) {
     if (!editable || !event.dataTransfer.types.includes(DOCUMENT_DRAG_MIME_TYPE)) {
@@ -67,6 +95,7 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
+        onContextMenu={handleContextMenu}
       >
         <button
           type="button"
@@ -90,7 +119,7 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
           <span className="truncate font-medium">{node.name}</span>
         </button>
 
-        {(editable || manageable) && (
+        {hasMenu && (
           <DropdownMenu
             trigger={
               <button
@@ -102,23 +131,16 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
               </button>
             }
           >
-            {editable && (
-              <DropdownItem onClick={() => openModal({ type: "createDocument", parent: node })}>Yeni Doküman</DropdownItem>
-            )}
-            {manageable && (
-              <DropdownItem onClick={() => openModal({ type: "createFolder", parent: node })}>Yeni Alt Klasör</DropdownItem>
-            )}
-            {manageable && <DropdownItem onClick={() => openModal({ type: "rename", folder: node })}>Yeniden Adlandır</DropdownItem>}
-            {manageable && <DropdownItem onClick={() => openModal({ type: "icon", folder: node })}>Simge Değiştir</DropdownItem>}
-            {manageable && <DropdownItem onClick={() => openModal({ type: "move", folder: node })}>Taşı</DropdownItem>}
-            {manageable && (
-              <DropdownItem danger onClick={() => openModal({ type: "delete", folder: node })}>
-                Sil
-              </DropdownItem>
-            )}
+            {renderMenuItems()}
           </DropdownMenu>
         )}
       </div>
+
+      {hasMenu && (
+        <ContextMenu point={contextMenuPoint} onClose={() => setContextMenuPoint(null)}>
+          {renderMenuItems()}
+        </ContextMenu>
+      )}
 
       <AnimatePresence initial={false}>
         {isExpanded && hasChildren && (

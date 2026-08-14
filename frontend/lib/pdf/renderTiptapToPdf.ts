@@ -1,5 +1,5 @@
 import type { jsPDF } from "jspdf";
-import { PDF_FONT_FAMILY } from "./embedFonts";
+import { DEFAULT_PDF_FONT_FAMILY } from "./embedFonts";
 
 export interface TiptapMark {
   type: string;
@@ -37,6 +37,7 @@ interface RenderContext {
   cursorY: number;
   pageHeight: number;
   contentWidth: number;
+  fontFamily: string;
 }
 
 interface LoadedImage {
@@ -119,7 +120,7 @@ function fontStyleForWord(word: WordToken): string {
 }
 
 function setFontForWord(ctx: RenderContext, word: WordToken, fontSize: number): void {
-  ctx.pdf.setFont(PDF_FONT_FAMILY, fontStyleForWord(word));
+  ctx.pdf.setFont(ctx.fontFamily, fontStyleForWord(word));
   ctx.pdf.setFontSize(fontSize);
 }
 
@@ -136,7 +137,7 @@ function renderInline(
   }
 
   const lineHeight = fontSize * LINE_HEIGHT_FACTOR;
-  ctx.pdf.setFont(PDF_FONT_FAMILY, "normal");
+  ctx.pdf.setFont(ctx.fontFamily, "normal");
   ctx.pdf.setFontSize(fontSize);
   const spaceWidth = ctx.pdf.getTextWidth(" ");
 
@@ -252,7 +253,7 @@ async function renderBlock(ctx: RenderContext, node: TiptapNode, indent = 0): Pr
       for (const item of node.content ?? []) {
         const marker = node.type === "orderedList" ? `${index}.` : "-";
         ensureSpace(ctx, BODY_FONT_SIZE * LINE_HEIGHT_FACTOR);
-        ctx.pdf.setFont(PDF_FONT_FAMILY, "normal");
+        ctx.pdf.setFont(ctx.fontFamily, "normal");
         ctx.pdf.setFontSize(BODY_FONT_SIZE);
         ctx.pdf.setTextColor(...TEXT_COLOR);
         ctx.pdf.text(marker, x, ctx.cursorY);
@@ -275,7 +276,7 @@ async function renderBlock(ctx: RenderContext, node: TiptapNode, indent = 0): Pr
     }
     case "codeBlock": {
       const text = (node.content ?? []).map((child) => child.text ?? "").join("");
-      ctx.pdf.setFont(PDF_FONT_FAMILY, "normal");
+      ctx.pdf.setFont(ctx.fontFamily, "normal");
       ctx.pdf.setFontSize(CODE_FONT_SIZE);
       const lines = ctx.pdf.splitTextToSize(text, maxWidth - 16) as string[];
       const blockHeight = lines.length * CODE_FONT_SIZE * LINE_HEIGHT_FACTOR + 16;
@@ -327,7 +328,11 @@ async function renderBlock(ctx: RenderContext, node: TiptapNode, indent = 0): Pr
   }
 }
 
-export async function renderTiptapDocumentToPdf(pdf: jsPDF, doc: TiptapNode): Promise<void> {
+export async function renderTiptapDocumentToPdf(
+  pdf: jsPDF,
+  doc: TiptapNode,
+  fontFamily: string = DEFAULT_PDF_FONT_FAMILY,
+): Promise<void> {
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
 
@@ -336,6 +341,7 @@ export async function renderTiptapDocumentToPdf(pdf: jsPDF, doc: TiptapNode): Pr
     cursorY: PAGE_MARGIN + CONTENT_TOP_OFFSET,
     pageHeight,
     contentWidth: pageWidth - PAGE_MARGIN * 2,
+    fontFamily,
   };
 
   for (const node of doc.content ?? []) {

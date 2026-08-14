@@ -6,6 +6,8 @@ import { parseDocumentJson } from "../tiptap/extensions";
 import type { FolderTreeNode } from "../types";
 import { downloadBlob } from "../utils/download";
 
+export type ExportAllFormat = "pdf" | "markdown";
+
 const INVALID_NAME_CHARS = /[\\/:*?"<>|]/g;
 
 function sanitizeName(name: string): string {
@@ -36,24 +38,32 @@ export function countDocuments(nodes: FolderTreeNode[]): number {
 async function renderDocumentPdf(documentId: string, jsPDFCtor: typeof import("jspdf").default): Promise<{ title: string; blob: Blob }> {
   const content = await getExportContent(documentId);
   const pdf = new jsPDFCtor({ unit: "pt", format: "a4" });
-  await embedPdfFonts(pdf);
+  const fontFamily = await embedPdfFonts(pdf, content.documentFont);
 
   const parsedDoc = parseDocumentJson(content.contentJson) as unknown as TiptapNode;
-  await renderTiptapDocumentToPdf(pdf, parsedDoc);
+  await renderTiptapDocumentToPdf(pdf, parsedDoc, fontFamily);
 
   return { title: content.title || "dokuman", blob: pdf.output("blob") };
+}
+
+async function renderDocumentMarkdown(documentId: string): Promise<{ title: string; blob: Blob }> {
+  const content = await getExportContent(documentId);
+  const blob = new Blob([content.contentMarkdown], { type: "text/markdown;charset=utf-8" });
+  return { title: content.title || "dokuman", blob };
 }
 
 async function addFolderContentsToZip(
   zip: JSZip,
   node: FolderTreeNode,
-  jsPDFCtor: typeof import("jspdf").default,
+  format: ExportAllFormat,
+  jsPDFCtor: typeof import("jspdf").default | null,
   onDocumentExported: () => void,
 ): Promise<void> {
+  const extension = format === "pdf" ? "pdf" : "md";
   const usedFileNames = new Set<string>();
   for (const doc of node.documents) {
-    const { title, blob } = await renderDocumentPdf(doc.id, jsPDFCtor);
-    const fileName = `${uniqueName(usedFileNames, sanitizeName(title))}.pdf`;
+    const { title, blob } = format === "pdf" && jsPDFCtor ? await renderDocumentPdf(doc.id, jsPDFCtor) : await renderDocumentMarkdown(doc.id);
+    const fileName = `${uniqueName(usedFileNames, sanitizeName(title))}.${extension}`;
     zip.file(fileName, blob);
     onDocumentExported();
   }
@@ -63,13 +73,20 @@ async function addFolderContentsToZip(
     const folderName = uniqueName(usedFolderNames, sanitizeName(child.name));
     const childZip = zip.folder(folderName);
     if (childZip) {
-      await addFolderContentsToZip(childZip, child, jsPDFCtor, onDocumentExported);
+      await addFolderContentsToZip(childZip, child, format, jsPDFCtor, onDocumentExported);
     }
   }
 }
 
-export async function exportAllAsZip(tree: FolderTreeNode[], onProgress?: (done: number, total: number) => void): Promise<Blob> {
-  const [{ default: JSZipCtor }, { default: jsPDFCtor }] = await Promise.all([import("jszip"), import("jspdf")]);
+export async function exportAllAsZip(
+  tree: FolderTreeNode[],
+  format: ExportAllFormat,
+  onProgress?: (done: number, total: number) => void,
+): Promise<Blob> {
+  const [{ default: JSZipCtor }, jsPDFCtor] = await Promise.all([
+    import("jszip"),
+    format === "pdf" ? import("jspdf").then((mod) => mod.default) : Promise.resolve(null),
+  ]);
 
   const zip = new JSZipCtor();
   const total = countDocuments(tree);
@@ -80,7 +97,7 @@ export async function exportAllAsZip(tree: FolderTreeNode[], onProgress?: (done:
     const folderName = uniqueName(usedFolderNames, sanitizeName(node.name));
     const folderZip = zip.folder(folderName);
     if (folderZip) {
-      await addFolderContentsToZip(folderZip, node, jsPDFCtor, () => {
+      await addFolderContentsToZip(folderZip, node, format, jsPDFCtor, () => {
         done += 1;
         onProgress?.(done, total);
       });

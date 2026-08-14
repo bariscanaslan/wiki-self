@@ -27,6 +27,9 @@ services:
       Jwt__Issuer: WikiSelf
       Jwt__Audience: WikiSelfClient
       Cors__AllowedOrigins__0: ${PUBLIC_ORIGIN:-http://localhost:8093}
+      Turnstile__Enabled: ${ENABLE_TURNSTILE:-false}
+      Turnstile__SiteKey: ${TURNSTILE_SITE_KEY:-}
+      Turnstile__SecretKey: ${TURNSTILE_SECRET_KEY:-}
     depends_on:
       db:
         condition: service_healthy

@@ -2,6 +2,7 @@ export const queryKeys = {
   me: ["me"] as const,
   setupStatus: ["setup", "status"] as const,
   settings: ["settings"] as const,
+  publicConfig: ["config", "public"] as const,
   users: ["users"] as const,
   user: (id: string) => ["users", id] as const,
   groups: ["groups"] as const,
