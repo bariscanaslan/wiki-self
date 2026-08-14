@@ -219,3 +219,5 @@ Adım 0'da seçilen yaklaşım (bölüm 6'daki öneri setinden) implement edilir
 ## Yıkıcı/geri alınamaz komutlar
 
 Bu oturumda yalnızca araştırma yapıldı, kod yazılmadı; önerilen hiçbir adım dosya silen, sıfırlayan veya geri alınamaz bir komut içermiyor.
+
+# Confidential Guide

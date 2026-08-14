@@ -37,3 +37,7 @@ Thumbs.db
 
 # Docker
 .env
+
+# Guides
+
+tauri-guide.md
