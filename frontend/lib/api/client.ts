@@ -1,5 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
-import { clearTokens, getAccessToken, getRefreshToken, setTokens } from "../auth/token-store";
+import { clearTokens, getAccessToken, setAccessToken } from "../auth/token-store";
 import type { RefreshTokenResponse } from "../types";
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:7000";
@@ -27,6 +27,7 @@ export function extractAssetId(url: string | null | undefined): string | null {
 
 export const apiClient = axios.create({
   baseURL: `${API_BASE_URL}/api`,
+  withCredentials: true,
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -40,17 +41,12 @@ apiClient.interceptors.request.use((config) => {
 let refreshPromise: Promise<string | null> | null = null;
 
 async function performRefresh(): Promise<string | null> {
-  const currentRefreshToken = getRefreshToken();
-  if (!currentRefreshToken) {
-    return null;
-  }
-
   try {
-    const response = await axios.post<RefreshTokenResponse>(`${API_BASE_URL}/api/auth/refresh`, {
-      refreshToken: currentRefreshToken,
+    const response = await axios.post<RefreshTokenResponse>(`${API_BASE_URL}/api/auth/refresh`, null, {
+      withCredentials: true,
     });
 
-    setTokens(response.data.accessToken, response.data.refreshToken);
+    setAccessToken(response.data.accessToken);
     return response.data.accessToken;
   } catch {
     clearTokens();

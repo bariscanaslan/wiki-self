@@ -47,10 +47,11 @@ public class AuthService : IAuthService
             user.TwoFactorEnabled);
     }
 
-    private async Task<LoginResponse> IssueTokensAsync(User user)
+    private async Task<TokenIssuance> IssueTokensAsync(User user)
     {
         var (accessToken, expiresAt) = _jwtTokenService.GenerateAccessToken(user);
         var refreshToken = _jwtTokenService.GenerateRefreshToken();
+        var refreshExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationDays);
 
         _db.RefreshTokens.Add(new RefreshToken
         {
@@ -58,15 +59,15 @@ public class AuthService : IAuthService
             UserId = user.Id,
             TokenHash = _jwtTokenService.HashRefreshToken(refreshToken),
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationDays)
+            ExpiresAt = refreshExpiresAt
         });
 
         await _db.SaveChangesAsync();
 
-        return new LoginResponse(accessToken, refreshToken, expiresAt, ToUserResponse(user));
+        return new TokenIssuance(new TokenPair(accessToken, expiresAt, refreshToken, refreshExpiresAt), ToUserResponse(user));
     }
 
-    public async Task<LoginResult> LoginAsync(LoginRequest request)
+    public async Task<LoginOutcome> LoginAsync(LoginRequest request)
     {
         if (!await _turnstileService.VerifyAsync(request.TurnstileToken))
         {
@@ -100,14 +101,14 @@ public class AuthService : IAuthService
             _db.MfaChallenges.Add(challenge);
             await _db.SaveChangesAsync();
 
-            return new LoginResult(true, challenge.Id.ToString(), null);
+            return new LoginOutcome(true, challenge.Id.ToString(), null);
         }
 
         var tokens = await IssueTokensAsync(user);
-        return new LoginResult(false, null, tokens);
+        return new LoginOutcome(false, null, tokens);
     }
 
-    public async Task<LoginResponse> VerifyTwoFactorLoginAsync(TwoFactorVerifyRequest request)
+    public async Task<TokenIssuance> VerifyTwoFactorLoginAsync(TwoFactorVerifyRequest request)
     {
         if (!Guid.TryParse(request.ChallengeToken, out var challengeId))
         {
@@ -270,9 +271,9 @@ public class AuthService : IAuthService
         return (plainCodes, JsonSerializer.Serialize(hashes));
     }
 
-    public async Task<RefreshTokenResponse> RefreshAsync(RefreshTokenRequest request)
+    public async Task<TokenPair> RefreshAsync(string refreshToken)
     {
-        var tokenHash = _jwtTokenService.HashRefreshToken(request.RefreshToken);
+        var tokenHash = _jwtTokenService.HashRefreshToken(refreshToken);
 
         var existingToken = await _db.RefreshTokens
             .Include(rt => rt.User)
@@ -290,6 +291,7 @@ public class AuthService : IAuthService
 
         var (accessToken, expiresAt) = _jwtTokenService.GenerateAccessToken(existingToken.User);
         var newRefreshToken = _jwtTokenService.GenerateRefreshToken();
+        var newRefreshExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationDays);
 
         var newTokenEntity = new RefreshToken
         {
@@ -297,7 +299,7 @@ public class AuthService : IAuthService
             UserId = existingToken.UserId,
             TokenHash = _jwtTokenService.HashRefreshToken(newRefreshToken),
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenExpirationDays)
+            ExpiresAt = newRefreshExpiresAt
         };
 
         existingToken.RevokedAt = DateTime.UtcNow;
@@ -306,12 +308,17 @@ public class AuthService : IAuthService
         _db.RefreshTokens.Add(newTokenEntity);
         await _db.SaveChangesAsync();
 
-        return new RefreshTokenResponse(accessToken, newRefreshToken, expiresAt);
+        return new TokenPair(accessToken, expiresAt, newRefreshToken, newRefreshExpiresAt);
     }
 
-    public async Task LogoutAsync(LogoutRequest request)
+    public async Task LogoutAsync(string? refreshToken)
     {
-        var tokenHash = _jwtTokenService.HashRefreshToken(request.RefreshToken);
+        if (string.IsNullOrEmpty(refreshToken))
+        {
+            return;
+        }
+
+        var tokenHash = _jwtTokenService.HashRefreshToken(refreshToken);
 
         var existingToken = await _db.RefreshTokens.FirstOrDefaultAsync(rt => rt.TokenHash == tokenHash);
         if (existingToken is null || existingToken.RevokedAt.HasValue)

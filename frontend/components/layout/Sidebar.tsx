@@ -7,6 +7,7 @@ import { ImageGallerySection } from "./ImageGallerySection";
 import { TagFilterSection } from "./TagFilterSection";
 
 type SidebarProps = {
+  isCollapsed: boolean;
   isMobileOpen: boolean;
   onMobileClose: () => void;
 };
@@ -27,7 +28,7 @@ function SidebarContent() {
   );
 }
 
-export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
+export function Sidebar({ isCollapsed, isMobileOpen, onMobileClose }: SidebarProps) {
   const { width, startResize } = useResizableWidth({
     storageKey: "wikiself.sidebarWidth",
     defaultWidth: SIDEBAR_DEFAULT_WIDTH,
@@ -37,19 +38,21 @@ export function Sidebar({ isMobileOpen, onMobileClose }: SidebarProps) {
 
   return (
     <>
-      <aside
-        className="relative hidden shrink-0 overflow-y-auto border-r border-zinc-100 bg-white px-2 py-4 md:block"
-        style={{ width }}
-      >
-        <SidebarContent />
-        <div
-          role="separator"
-          aria-orientation="vertical"
-          aria-label="Kenar çubuğu genişliğini ayarla"
-          onPointerDown={startResize}
-          className="absolute right-0 top-0 z-10 hidden h-full w-1 cursor-col-resize touch-none hover:bg-primary-300 md:block"
-        />
-      </aside>
+      {!isCollapsed && (
+        <aside
+          className="relative hidden shrink-0 overflow-y-auto border-r border-zinc-100 bg-white px-2 py-4 md:block"
+          style={{ width }}
+        >
+          <SidebarContent />
+          <div
+            role="separator"
+            aria-orientation="vertical"
+            aria-label="Kenar çubuğu genişliğini ayarla"
+            onPointerDown={startResize}
+            className="absolute right-0 top-0 z-10 hidden h-full w-1 cursor-col-resize touch-none hover:bg-primary-300 md:block"
+          />
+        </aside>
+      )}
 
       {isMobileOpen && (
         <div className="fixed inset-x-0 bottom-0 top-16 z-40 md:hidden">

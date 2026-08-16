@@ -9,7 +9,7 @@ import {
   refresh as refreshApi,
   verifyTwoFactorLogin as verifyTwoFactorLoginApi,
 } from "../api/auth";
-import { clearTokens, getRefreshToken, loadPersistedRefreshToken, setTokens } from "./token-store";
+import { clearTokens, setAccessToken } from "./token-store";
 import type { LoginRequest, LoginResult, UserResponse } from "../types";
 
 interface AuthContextValue {
@@ -33,15 +33,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
 
     async function loadSession() {
-      const persistedRefreshToken = loadPersistedRefreshToken();
-      if (!persistedRefreshToken) {
-        setIsLoading(false);
-        return;
-      }
-
       try {
-        const tokens = await refreshApi({ refreshToken: persistedRefreshToken });
-        setTokens(tokens.accessToken, tokens.refreshToken);
+        const tokens = await refreshApi();
+        setAccessToken(tokens.accessToken);
         const me = await fetchMe();
         if (!cancelled) {
           setUser(me);
@@ -68,7 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback(async (request: LoginRequest) => {
     const result = await loginApi(request);
     if (!result.requiresTwoFactor && result.tokens) {
-      setTokens(result.tokens.accessToken, result.tokens.refreshToken);
+      setAccessToken(result.tokens.accessToken);
       setUser(result.tokens.user);
     }
     return result;
@@ -76,18 +70,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const completeTwoFactorLogin = useCallback(async (challengeToken: string, code: string) => {
     const response = await verifyTwoFactorLoginApi({ challengeToken, code });
-    setTokens(response.accessToken, response.refreshToken);
+    setAccessToken(response.accessToken);
     setUser(response.user);
   }, []);
 
   const logout = useCallback(async () => {
-    const token = getRefreshToken();
-    if (token) {
-      try {
-        await logoutApi(token);
-      } catch {
-        clearTokens();
-      }
+    try {
+      await logoutApi();
+    } catch {
+      // ignore — local session state is cleared below regardless
     }
     clearTokens();
     setUser(null);

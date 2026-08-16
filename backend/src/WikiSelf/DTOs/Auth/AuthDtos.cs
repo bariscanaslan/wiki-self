@@ -4,15 +4,11 @@ namespace WikiSelf.DTOs.Auth;
 
 public record LoginRequest(string Email, string Password, string? TurnstileToken = null);
 
-public record LoginResponse(string AccessToken, string RefreshToken, DateTime AccessTokenExpiresAt, UserResponse User);
+public record LoginResponse(string AccessToken, DateTime AccessTokenExpiresAt, UserResponse User);
 
 public record LoginResult(bool RequiresTwoFactor, string? ChallengeToken, LoginResponse? Tokens);
 
-public record RefreshTokenRequest(string RefreshToken);
-
-public record RefreshTokenResponse(string AccessToken, string RefreshToken, DateTime AccessTokenExpiresAt);
-
-public record LogoutRequest(string RefreshToken);
+public record RefreshTokenResponse(string AccessToken, DateTime AccessTokenExpiresAt);
 
 public record VerifyPasswordRequest(string Password);
 

@@ -5,7 +5,6 @@ import type {
   LoginRequest,
   LoginResponse,
   LoginResult,
-  RefreshTokenRequest,
   RefreshTokenResponse,
   TwoFactorDisableRequest,
   TwoFactorEnableRequest,
@@ -40,13 +39,13 @@ export async function disableTwoFactor(request: TwoFactorDisableRequest): Promis
   await apiClient.post("/auth/2fa/disable", request);
 }
 
-export async function refresh(request: RefreshTokenRequest): Promise<RefreshTokenResponse> {
-  const response = await apiClient.post<RefreshTokenResponse>("/auth/refresh", request);
+export async function refresh(): Promise<RefreshTokenResponse> {
+  const response = await apiClient.post<RefreshTokenResponse>("/auth/refresh");
   return response.data;
 }
 
-export async function logout(refreshToken: string): Promise<void> {
-  await apiClient.post("/auth/logout", { refreshToken });
+export async function logout(): Promise<void> {
+  await apiClient.post("/auth/logout");
 }
 
 export async function fetchMe(): Promise<UserResponse> {

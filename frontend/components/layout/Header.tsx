@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { resolveAssetUrl } from "../../lib/api/client";
 import { useSiteSettings } from "../../lib/settings/SettingsContext";
 import { SearchBox } from "../search/SearchBox";
@@ -10,9 +10,16 @@ import { UserMenu } from "./UserMenu";
 type HeaderProps = {
   isMobileSidebarOpen: boolean;
   onMobileSidebarToggle: () => void;
+  isSidebarCollapsed: boolean;
+  onSidebarCollapsedToggle: () => void;
 };
 
-export function Header({ isMobileSidebarOpen, onMobileSidebarToggle }: HeaderProps) {
+export function Header({
+  isMobileSidebarOpen,
+  onMobileSidebarToggle,
+  isSidebarCollapsed,
+  onSidebarCollapsedToggle,
+}: HeaderProps) {
   const { settings } = useSiteSettings();
   const logoUrl = resolveAssetUrl(settings?.logoUrl);
 
@@ -27,6 +34,19 @@ export function Header({ isMobileSidebarOpen, onMobileSidebarToggle }: HeaderPro
         aria-expanded={isMobileSidebarOpen}
       >
         {isMobileSidebarOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
+      </button>
+
+      <button
+        type="button"
+        onClick={onSidebarCollapsedToggle}
+        className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-lg text-zinc-600 transition-colors hover:bg-zinc-100 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 md:flex"
+        aria-label={isSidebarCollapsed ? "Kenar çubuğunu göster" : "Kenar çubuğunu gizle"}
+      >
+        {isSidebarCollapsed ? (
+          <PanelLeftOpen className="h-5 w-5" aria-hidden="true" />
+        ) : (
+          <PanelLeftClose className="h-5 w-5" aria-hidden="true" />
+        )}
       </button>
 
       <Link href="/" className="flex shrink-0 items-center gap-2.5">

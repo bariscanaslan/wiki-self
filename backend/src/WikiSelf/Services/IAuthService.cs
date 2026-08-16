@@ -1,14 +1,15 @@
 using WikiSelf.DTOs.Auth;
 using WikiSelf.DTOs.Users;
+using WikiSelf.Services.Auth;
 
 namespace WikiSelf.Services;
 
 public interface IAuthService
 {
-    Task<LoginResult> LoginAsync(LoginRequest request);
-    Task<LoginResponse> VerifyTwoFactorLoginAsync(TwoFactorVerifyRequest request);
-    Task<RefreshTokenResponse> RefreshAsync(RefreshTokenRequest request);
-    Task LogoutAsync(LogoutRequest request);
+    Task<LoginOutcome> LoginAsync(LoginRequest request);
+    Task<TokenIssuance> VerifyTwoFactorLoginAsync(TwoFactorVerifyRequest request);
+    Task<TokenPair> RefreshAsync(string refreshToken);
+    Task LogoutAsync(string? refreshToken);
     Task<UserResponse> GetMeAsync(Guid userId);
     Task VerifyPasswordAsync(Guid userId, VerifyPasswordRequest request);
     Task ChangePasswordAsync(Guid userId, ChangePasswordRequest request);

@@ -8,7 +8,6 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken: string;
-  refreshToken: string;
   accessTokenExpiresAt: string;
   user: UserResponse;
 }
@@ -42,18 +41,9 @@ export interface TwoFactorDisableRequest {
   password: string;
 }
 
-export interface RefreshTokenRequest {
-  refreshToken: string;
-}
-
 export interface RefreshTokenResponse {
   accessToken: string;
-  refreshToken: string;
   accessTokenExpiresAt: string;
-}
-
-export interface LogoutRequest {
-  refreshToken: string;
 }
 
 export interface VerifyPasswordRequest {

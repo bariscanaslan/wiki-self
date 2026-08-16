@@ -7,12 +7,14 @@ import { Sidebar } from "../../components/layout/Sidebar";
 import { FullPageSpinner } from "../../components/ui/Spinner";
 import { useSetupStatus } from "../../lib/api/setup";
 import { useAuth } from "../../lib/auth/AuthContext";
+import { useLocalStorageFlag } from "../../lib/hooks/useLocalStorageFlag";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuth();
   const { data: setupStatus, isLoading: setupLoading } = useSetupStatus();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useLocalStorageFlag("wikiself.sidebarCollapsed", false);
 
   useEffect(() => {
     if (!isMobileSidebarOpen) {
@@ -63,9 +65,15 @@ export default function AppLayout({ children }: { children: ReactNode }) {
       <Header
         isMobileSidebarOpen={isMobileSidebarOpen}
         onMobileSidebarToggle={() => setIsMobileSidebarOpen((isOpen) => !isOpen)}
+        isSidebarCollapsed={isSidebarCollapsed}
+        onSidebarCollapsedToggle={() => setIsSidebarCollapsed((isCollapsed) => !isCollapsed)}
       />
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar isMobileOpen={isMobileSidebarOpen} onMobileClose={() => setIsMobileSidebarOpen(false)} />
+        <Sidebar
+          isCollapsed={isSidebarCollapsed}
+          isMobileOpen={isMobileSidebarOpen}
+          onMobileClose={() => setIsMobileSidebarOpen(false)}
+        />
         <main inert={isMobileSidebarOpen} className="flex-1 overflow-y-auto bg-zinc-50/50">
           {children}
         </main>

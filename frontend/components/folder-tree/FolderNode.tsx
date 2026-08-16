@@ -3,7 +3,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRight, MoreVertical } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { extractErrorMessage } from "../../lib/api/client";
 import { useMoveDocument } from "../../lib/api/documents";
@@ -20,20 +20,24 @@ import { useFolderTreeUI } from "./FolderTreeUIContext";
 export const FOLDER_DRAG_MIME_TYPE = "application/x-wikiself-folder-id";
 
 export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: number }) {
-  const [isExpanded, setIsExpanded] = useState(depth === 0);
   const [isDragOver, setIsDragOver] = useState(false);
   const [contextMenuPoint, setContextMenuPoint] = useState<{ x: number; y: number } | null>(null);
-  const { openModal, collapseSignal } = useFolderTreeUI();
+  const { openModal, collapseSignal, expandedState, setExpanded } = useFolderTreeUI();
   const moveDocument = useMoveDocument();
   const moveFolder = useMoveFolder();
 
-  const [lastCollapseSignal, setLastCollapseSignal] = useState(collapseSignal);
-  if (collapseSignal !== lastCollapseSignal) {
-    setLastCollapseSignal(collapseSignal);
-    if (isExpanded) {
-      setIsExpanded(false);
+  const stored = expandedState[node.id];
+  const isExpanded = stored !== undefined ? stored : depth === 0;
+
+  const lastCollapseSignalRef = useRef(collapseSignal);
+  useEffect(() => {
+    if (collapseSignal !== lastCollapseSignalRef.current) {
+      lastCollapseSignalRef.current = collapseSignal;
+      if (isExpanded) {
+        setExpanded(node.id, false);
+      }
     }
-  }
+  }, [collapseSignal, isExpanded, node.id, setExpanded]);
 
   const hasChildren = node.children.length > 0 || node.documents.length > 0;
   const editable = canEdit(node.effectivePermission);
@@ -143,7 +147,7 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
       >
         <button
           type="button"
-          onClick={() => setIsExpanded((prev) => !prev)}
+          onClick={() => setExpanded(node.id, !isExpanded)}
           className="flex h-5 w-5 shrink-0 items-center justify-center text-zinc-400"
         >
           <motion.span animate={{ rotate: isExpanded ? 90 : 0 }} transition={{ duration: 0.15 }}>
@@ -153,7 +157,7 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
 
         <button
           type="button"
-          onClick={() => setIsExpanded((prev) => !prev)}
+          onClick={() => setExpanded(node.id, !isExpanded)}
           className="flex flex-1 items-center gap-2 truncate text-left"
         >
           <FontAwesomeIcon
