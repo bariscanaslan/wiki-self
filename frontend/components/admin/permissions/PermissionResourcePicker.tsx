@@ -47,14 +47,14 @@ function FolderBranch({
       <div
         className={cn(
           "flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm",
-          isSelected ? "bg-primary-50 text-primary-700" : "text-zinc-700 hover:bg-zinc-100",
+          isSelected ? "bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-400" : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800",
         )}
         style={{ paddingLeft: `${depth * 16 + 4}px` }}
       >
         <button
           type="button"
           onClick={() => setIsExpanded((prev) => !prev)}
-          className="flex h-5 w-5 shrink-0 items-center justify-center text-zinc-400"
+          className="flex h-5 w-5 shrink-0 items-center justify-center text-zinc-400 dark:text-zinc-500"
         >
           <ChevronRight size={14} className={cn("transition-transform", isExpanded && "rotate-90")} />
         </button>
@@ -63,7 +63,7 @@ function FolderBranch({
           onClick={() => onSelect({ type: ResourceType.Folder, id: node.id, label: node.name })}
           className="flex flex-1 items-center gap-2 truncate text-left"
         >
-          <Folder size={14} className="shrink-0 text-zinc-400" />
+          <Folder size={14} className="shrink-0 text-zinc-400 dark:text-zinc-500" />
           <span className="truncate font-medium">{node.name}</span>
         </button>
       </div>
@@ -83,10 +83,10 @@ function FolderBranch({
                 style={{ paddingLeft: `${(depth + 1) * 16 + 28}px` }}
                 className={cn(
                   "flex w-full items-center gap-2 rounded-lg py-1.5 pr-2 text-left text-sm",
-                  isDocSelected ? "bg-primary-50 text-primary-700" : "text-zinc-600 hover:bg-zinc-100",
+                  isDocSelected ? "bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-400" : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800",
                 )}
               >
-                <File size={13} className="shrink-0 text-zinc-400" />
+                <File size={13} className="shrink-0 text-zinc-400 dark:text-zinc-500" />
                 <span className="truncate">{document.title}</span>
               </button>
             );

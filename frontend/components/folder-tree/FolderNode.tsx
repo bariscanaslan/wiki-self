@@ -134,8 +134,8 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
     <div>
       <div
         className={cn(
-          "group flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-zinc-700 hover:bg-zinc-100",
-          isDragOver && "bg-primary-50 ring-2 ring-inset ring-primary-300",
+          "group flex items-center gap-1 rounded-lg px-2 py-1.5 text-sm text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800",
+          isDragOver && "bg-primary-50 dark:bg-primary-500/10 ring-2 ring-inset ring-primary-300 dark:ring-primary-700",
         )}
         style={{ paddingLeft: `${depth * 16 + 8}px` }}
         draggable={manageable}
@@ -148,7 +148,7 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
         <button
           type="button"
           onClick={() => setExpanded(node.id, !isExpanded)}
-          className="flex h-5 w-5 shrink-0 items-center justify-center text-zinc-400"
+          className="flex h-5 w-5 shrink-0 items-center justify-center text-zinc-400 dark:text-zinc-500"
         >
           <motion.span animate={{ rotate: isExpanded ? 90 : 0 }} transition={{ duration: 0.15 }}>
             <ChevronRight size={14} className={cn(!hasChildren && "opacity-0")} />
@@ -162,7 +162,7 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
         >
           <FontAwesomeIcon
             icon={getFolderIcon(node.icon, isExpanded)}
-            className={cn("h-4 w-4 shrink-0", isExpanded ? "text-primary-500" : "text-zinc-400")}
+            className={cn("h-4 w-4 shrink-0", isExpanded ? "text-primary-500 dark:text-primary-400" : "text-zinc-400 dark:text-zinc-500")}
           />
           <span className="truncate font-medium">{node.name}</span>
         </button>
@@ -172,7 +172,7 @@ export function FolderNode({ node, depth }: { node: FolderTreeNode; depth: numbe
             trigger={
               <button
                 type="button"
-                className="rounded p-1 text-zinc-400 opacity-0 transition-opacity hover:bg-zinc-200 group-hover:opacity-100"
+                className="rounded p-1 text-zinc-400 dark:text-zinc-500 opacity-0 transition-opacity hover:bg-zinc-200 dark:hover:bg-zinc-700 group-hover:opacity-100"
                 aria-label="Klasör işlemleri"
               >
                 <MoreVertical size={14} />

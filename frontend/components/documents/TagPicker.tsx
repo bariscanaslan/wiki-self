@@ -82,7 +82,7 @@ export function TagPicker({ documentId, tags, editable }: TagPickerProps) {
         <Badge key={tag.id} variant="primary" className="gap-1">
           {tag.name}
           {editable && (
-            <button type="button" onClick={() => removeTag(tag.id)} className="rounded-full hover:bg-primary-100" aria-label={`${tag.name} etiketini kaldır`}>
+            <button type="button" onClick={() => removeTag(tag.id)} className="rounded-full hover:bg-primary-100 dark:hover:bg-primary-500/15" aria-label={`${tag.name} etiketini kaldır`}>
               <X size={10} />
             </button>
           )}
@@ -110,16 +110,16 @@ export function TagPicker({ documentId, tags, editable }: TagPickerProps) {
               }
             }}
             placeholder="Etiket ekle..."
-            className="w-28 rounded-full border border-dashed border-zinc-300 px-2.5 py-0.5 text-xs focus:border-primary-400 focus:outline-none"
+            className="w-28 rounded-full border border-dashed border-zinc-300 dark:border-zinc-700 px-2.5 py-0.5 text-xs focus:border-primary-400 focus:outline-none"
           />
           {isOpen && input.trim() && (
-            <div className="absolute left-0 top-full z-20 mt-1 max-h-48 w-40 overflow-y-auto rounded-lg border border-zinc-200 bg-white p-1 shadow-lg">
+            <div className="absolute left-0 top-full z-20 mt-1 max-h-48 w-40 overflow-y-auto rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 shadow-lg">
               {suggestions.map((tag) => (
                 <button
                   key={tag.id}
                   type="button"
                   onClick={() => addTag(tag)}
-                  className="block w-full rounded px-2 py-1 text-left text-xs text-zinc-700 hover:bg-zinc-100"
+                  className="block w-full rounded px-2 py-1 text-left text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                 >
                   {tag.name}
                 </button>
@@ -127,7 +127,7 @@ export function TagPicker({ documentId, tags, editable }: TagPickerProps) {
               <button
                 type="button"
                 onClick={createAndAdd}
-                className="block w-full rounded px-2 py-1 text-left text-xs text-primary-600 hover:bg-primary-50"
+                className="block w-full rounded px-2 py-1 text-left text-xs text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-500/10"
               >
                 &quot;{input.trim()}&quot; oluştur
               </button>

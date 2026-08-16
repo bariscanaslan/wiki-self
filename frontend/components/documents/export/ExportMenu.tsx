@@ -31,7 +31,7 @@ export function ExportMenu({ documentId }: { documentId: string }) {
         <button
           type="button"
           disabled={isExporting}
-          className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-900 transition-colors hover:border-primary-400 hover:text-primary-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-zinc-100 transition-colors hover:border-primary-400 hover:text-primary-700 dark:hover:text-primary-400 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <Download size={16} /> {isExporting ? "İndiriliyor..." : "Dışa Aktar"}
         </button>

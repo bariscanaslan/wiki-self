@@ -38,13 +38,13 @@ export function MoveFolderModal({ isOpen, folder, tree, onClose }: MoveFolderMod
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={`"${folder?.name ?? ""}" klasörünü taşı`}>
-      <div className="max-h-80 overflow-y-auto rounded-lg border border-zinc-100 p-2">
+      <div className="max-h-80 overflow-y-auto rounded-lg border border-zinc-100 dark:border-zinc-800 p-2">
         <button
           type="button"
           onClick={() => setSelectedId(null)}
           className={cn(
             "mb-1 flex w-full items-center rounded-lg px-2 py-1.5 text-left text-sm transition-colors",
-            selectedId === null ? "bg-primary-50 font-medium text-primary-700" : "text-zinc-700 hover:bg-zinc-100",
+            selectedId === null ? "bg-primary-50 dark:bg-primary-500/10 font-medium text-primary-700 dark:text-primary-400" : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800",
           )}
         >
           Kök dizin

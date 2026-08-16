@@ -45,7 +45,7 @@ export function GroupsTable() {
 
       {isLoading && (
         <div className="flex justify-center py-16">
-          <Spinner className="text-primary-500" />
+          <Spinner className="text-primary-500 dark:text-primary-400" />
         </div>
       )}
 
@@ -53,21 +53,21 @@ export function GroupsTable() {
 
       <div className="grid gap-3 sm:grid-cols-2">
         {groups?.map((group) => (
-          <div key={group.id} className="rounded-xl border border-zinc-100 bg-white p-4">
+          <div key={group.id} className="rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <Link href={`/admin/groups/${group.id}`} className="font-semibold text-zinc-900 hover:text-primary-600">
+                <Link href={`/admin/groups/${group.id}`} className="font-semibold text-zinc-900 dark:text-zinc-100 hover:text-primary-600 dark:hover:text-primary-400">
                   {group.name}
                 </Link>
-                <p className="mt-1 text-xs text-zinc-500">{group.memberCount} üye</p>
-                {group.description && <p className="mt-2 text-sm text-zinc-500">{group.description}</p>}
+                <p className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">{group.memberCount} üye</p>
+                {group.description && <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{group.description}</p>}
               </div>
               <div className="flex shrink-0 gap-1">
                 <Button variant="ghost" size="sm" onClick={() => setEditGroup(group)}>
                   Düzenle
                 </Button>
                 <Button variant="ghost" size="sm" onClick={() => setDeleteTarget(group)} aria-label="Sil">
-                  <Trash2 size={14} className="text-red-500" />
+                  <Trash2 size={14} className="text-red-500 dark:text-red-400" />
                 </Button>
               </div>
             </div>

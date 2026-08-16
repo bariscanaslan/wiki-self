@@ -36,8 +36,8 @@ export function DeleteUserModal({ user, onClose }: { user: UserResponse | null; 
   return (
     <Modal isOpen={Boolean(user)} onClose={handleClose} title="Kullanıcıyı Sil" size="sm">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <p className="text-sm text-zinc-600">
-          <span className="font-medium text-zinc-900">{user?.displayName}</span> adlı kullanıcıyı kalıcı olarak silmek üzeresiniz. Bu
+        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+          <span className="font-medium text-zinc-900 dark:text-zinc-100">{user?.displayName}</span> adlı kullanıcıyı kalıcı olarak silmek üzeresiniz. Bu
           işlem geri alınamaz. Onaylamak için kendi şifrenizi girin.
         </p>
         <PasswordInput

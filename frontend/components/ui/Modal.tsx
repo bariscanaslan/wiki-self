@@ -60,18 +60,18 @@ export function Modal({ isOpen, onClose, title, children, size = "md" }: ModalPr
           <motion.div
             role="dialog"
             aria-modal="true"
-            className={cn("relative w-full rounded-2xl bg-white p-6 shadow-xl", sizeStyles[size])}
+            className={cn("relative w-full rounded-2xl bg-white dark:bg-zinc-900 p-6 shadow-xl", sizeStyles[size])}
             initial={{ opacity: 0, scale: 0.95, y: 12 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: 8 }}
             transition={{ duration: 0.18, ease: "easeOut" }}
           >
             <div className="mb-4 flex items-center justify-between">
-              {title && <h2 className="text-lg font-semibold text-zinc-900">{title}</h2>}
+              {title && <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">{title}</h2>}
               <button
                 type="button"
                 onClick={onClose}
-                className="ml-auto rounded-full p-1.5 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-zinc-600"
+                className="ml-auto rounded-full p-1.5 text-zinc-400 dark:text-zinc-500 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-600 dark:hover:text-zinc-400"
                 aria-label="Kapat"
               >
                 <X size={18} />

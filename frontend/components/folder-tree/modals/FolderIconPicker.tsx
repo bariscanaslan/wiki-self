@@ -44,8 +44,8 @@ export function FolderIconPicker({ isOpen, folder, onClose }: FolderIconPickerPr
               disabled={updateIcon.isPending}
               onClick={() => handlePick(option.key)}
               className={cn(
-                "flex aspect-square flex-col items-center justify-center gap-1 rounded-xl border text-zinc-500 transition-colors hover:border-primary-300 hover:bg-primary-50 hover:text-primary-600 disabled:opacity-50",
-                isSelected ? "border-primary-400 bg-primary-50 text-primary-600" : "border-zinc-200",
+                "flex aspect-square flex-col items-center justify-center gap-1 rounded-xl border text-zinc-500 dark:text-zinc-400 transition-colors hover:border-primary-300 dark:hover:border-primary-700 hover:bg-primary-50 dark:hover:bg-primary-500/10 hover:text-primary-600 dark:hover:text-primary-400 disabled:opacity-50",
+                isSelected ? "border-primary-400 bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400" : "border-zinc-200 dark:border-zinc-800",
               )}
             >
               <FontAwesomeIcon icon={option.icon} className="h-4 w-4" />

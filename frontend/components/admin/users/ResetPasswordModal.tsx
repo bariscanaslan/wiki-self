@@ -40,7 +40,7 @@ export function ResetPasswordModal({ user, onClose }: { user: UserResponse | nul
   return (
     <Modal isOpen={Boolean(user)} onClose={handleClose} title="Şifreyi Sıfırla" size="sm">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <p className="text-sm text-zinc-500">{user?.displayName} için yeni bir şifre belirleyin.</p>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">{user?.displayName} için yeni bir şifre belirleyin.</p>
         <PasswordInput
           label="Yeni Şifre"
           value={password}

@@ -33,10 +33,10 @@ export function FolderPickerTree({ nodes, selectedId, onSelect, depth = 0, exclu
               style={{ paddingLeft: `${depth * 16 + 8}px` }}
               className={cn(
                 "flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40",
-                selectedId === node.id ? "bg-primary-50 font-medium text-primary-700" : "text-zinc-700 hover:bg-zinc-100",
+                selectedId === node.id ? "bg-primary-50 dark:bg-primary-500/10 font-medium text-primary-700 dark:text-primary-400" : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800",
               )}
             >
-              <Folder size={14} className="shrink-0 text-zinc-400" />
+              <Folder size={14} className="shrink-0 text-zinc-400 dark:text-zinc-500" />
               <span className="truncate">{node.name}</span>
             </button>
             {node.children.length > 0 && (

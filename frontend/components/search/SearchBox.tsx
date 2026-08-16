@@ -43,13 +43,13 @@ export function SearchBox() {
   return (
     <div ref={containerRef} className="relative w-full">
       <form onSubmit={handleSubmit} className="relative">
-        <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+        <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500" />
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           onFocus={() => setIsFocused(true)}
           placeholder="Dokümanlarda ara..."
-          className="w-full rounded-full border border-zinc-200 bg-zinc-50 py-2 pl-9 pr-4 text-sm text-zinc-900 transition-colors focus:border-primary-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-primary-100"
+          className="w-full rounded-full border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 py-2 pl-9 pr-4 text-sm text-zinc-900 dark:text-zinc-100 transition-colors focus:border-primary-400 focus:bg-white dark:focus:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900/40"
         />
       </form>
 
@@ -60,14 +60,14 @@ export function SearchBox() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
-            className="absolute left-0 right-0 top-full z-30 mt-2 max-h-96 overflow-y-auto rounded-xl border border-zinc-100 bg-white p-2 shadow-xl"
+            className="absolute left-0 right-0 top-full z-30 mt-2 max-h-96 overflow-y-auto rounded-xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 shadow-xl"
           >
             {isFetching && (
-              <div className="flex items-center justify-center gap-2 py-6 text-sm text-zinc-400">
+              <div className="flex items-center justify-center gap-2 py-6 text-sm text-zinc-400 dark:text-zinc-500">
                 <Loader2 size={16} className="animate-spin" /> Aranıyor...
               </div>
             )}
-            {!isFetching && data?.results.length === 0 && <p className="px-3 py-6 text-center text-sm text-zinc-400">Sonuç bulunamadı</p>}
+            {!isFetching && data?.results.length === 0 && <p className="px-3 py-6 text-center text-sm text-zinc-400 dark:text-zinc-500">Sonuç bulunamadı</p>}
             {!isFetching &&
               data?.results.map((result) => {
                 const folderPath = folderPathMap.get(result.folderId);
@@ -76,15 +76,15 @@ export function SearchBox() {
                     key={result.documentId}
                     href={`/documents/${result.documentId}`}
                     onClick={() => setIsFocused(false)}
-                    className="flex items-start gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-zinc-50"
+                    className="flex items-start gap-2.5 rounded-lg px-3 py-2 text-sm hover:bg-zinc-50 dark:hover:bg-zinc-800"
                   >
-                    <FileText size={15} className="mt-0.5 shrink-0 text-primary-500" />
+                    <FileText size={15} className="mt-0.5 shrink-0 text-primary-500 dark:text-primary-400" />
                     <div className="min-w-0">
-                      <p className="truncate font-medium text-zinc-900">{result.title}</p>
-                      <p className="truncate text-xs text-zinc-400">
+                      <p className="truncate font-medium text-zinc-900 dark:text-zinc-100">{result.title}</p>
+                      <p className="truncate text-xs text-zinc-400 dark:text-zinc-500">
                         {folderPath ? `${folderPath}/${result.title}` : result.title}
                       </p>
-                      <p className="truncate text-xs text-zinc-500">{result.snippet}</p>
+                      <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">{result.snippet}</p>
                     </div>
                   </Link>
                 );
@@ -93,7 +93,7 @@ export function SearchBox() {
               <Link
                 href={`/search?q=${encodeURIComponent(debouncedQuery)}`}
                 onClick={() => setIsFocused(false)}
-                className="block rounded-lg px-3 py-2 text-center text-xs font-medium text-primary-600 hover:bg-primary-50"
+                className="block rounded-lg px-3 py-2 text-center text-xs font-medium text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-500/10"
               >
                 Tüm sonuçları gör ({data.totalCount})
               </Link>

@@ -95,16 +95,16 @@ export function SetupWizard() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4 py-10">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-800 px-4 py-10">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-xl rounded-2xl border border-zinc-100 bg-white p-8 shadow-xl"
+        className="w-full max-w-xl rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-xl"
       >
         <div className="mb-8 text-center">
-          <h1 className="text-2xl font-bold text-zinc-900">WikiSelf Kurulumu</h1>
-          <p className="mt-1 text-sm text-zinc-500">Başlamadan önce birkaç adımı tamamlayalım.</p>
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">WikiSelf Kurulumu</h1>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Başlamadan önce birkaç adımı tamamlayalım.</p>
         </div>
 
         <div className="mb-8">

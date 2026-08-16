@@ -72,12 +72,12 @@ export function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-zinc-800 px-4">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="w-full max-w-sm rounded-2xl border border-zinc-100 bg-white p-8 shadow-xl"
+        className="w-full max-w-sm rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 shadow-xl"
       >
         <div className="mb-8 flex flex-col items-center text-center">
           {logoUrl ? (
@@ -87,8 +87,8 @@ export function LoginForm() {
               {(settings?.companyName ?? "W").charAt(0).toUpperCase()}
             </div>
           )}
-          <h1 className="text-xl font-bold text-zinc-900">{settings?.companyName || "WikiSelf"}</h1>
-          <p className="mt-1 text-sm text-zinc-500">
+          <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">{settings?.companyName || "WikiSelf"}</h1>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
             {challengeToken ? "Authenticator uygulamanızdaki kodu girin" : "Devam etmek için giriş yapın"}
           </p>
         </div>
@@ -111,7 +111,7 @@ export function LoginForm() {
                 setChallengeToken(null);
                 setCode("");
               }}
-              className="text-center text-xs font-medium text-zinc-500 hover:text-primary-600"
+              className="text-center text-xs font-medium text-zinc-500 dark:text-zinc-400 hover:text-primary-600 dark:hover:text-primary-400"
             >
               Farklı bir hesapla giriş yap
             </button>

@@ -30,7 +30,7 @@ export function ImageUploadButton({
         onClick={() => inputRef.current?.click()}
         title="Görsel Ekle"
         aria-label="Görsel Ekle"
-        className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-30"
+        className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 dark:text-zinc-400 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-30"
       >
         {isUploading ? <Loader2 size={16} className="animate-spin" /> : <ImageIcon size={16} />}
       </button>

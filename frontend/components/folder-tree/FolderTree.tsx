@@ -23,12 +23,12 @@ function FolderTreeInner() {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between px-2 pb-2">
-        <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Klasörler</span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">Klasörler</span>
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={collapseAll}
-            className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-primary-600"
+            className="rounded p-1 text-zinc-400 dark:text-zinc-500 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-primary-600 dark:hover:text-primary-400"
             aria-label="Tüm klasörleri kapat"
             title="Tüm klasörleri kapat"
           >
@@ -38,7 +38,7 @@ function FolderTreeInner() {
             <button
               type="button"
               onClick={() => openModal({ type: "createFolder", parent: null })}
-              className="rounded p-1 text-zinc-400 transition-colors hover:bg-zinc-100 hover:text-primary-600"
+              className="rounded p-1 text-zinc-400 dark:text-zinc-500 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-primary-600 dark:hover:text-primary-400"
               aria-label="Yeni klasör"
             >
               <FolderPlus size={16} />
@@ -49,7 +49,7 @@ function FolderTreeInner() {
 
       {isLoading && (
         <div className="flex justify-center py-8">
-          <Spinner className="text-primary-500" />
+          <Spinner className="text-primary-500 dark:text-primary-400" />
         </div>
       )}
 
@@ -63,7 +63,7 @@ function FolderTreeInner() {
         <button
           type="button"
           onClick={() => openModal({ type: "exportAll" })}
-          className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-200 px-2 py-2 text-xs font-medium text-zinc-500 transition-colors hover:border-primary-300 hover:bg-zinc-50 hover:text-primary-700"
+          className="mt-2 flex items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-200 dark:border-zinc-800 px-2 py-2 text-xs font-medium text-zinc-500 dark:text-zinc-400 transition-colors hover:border-primary-300 dark:hover:border-primary-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:text-primary-700 dark:hover:text-primary-400"
         >
           <PackageOpen size={14} /> Tümünü Dışa Aktar
         </button>

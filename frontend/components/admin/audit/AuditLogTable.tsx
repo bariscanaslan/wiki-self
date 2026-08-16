@@ -97,16 +97,16 @@ export function AuditLogTable() {
 
       {isBusy && (
         <div className="flex justify-center py-16">
-          <Spinner className="text-primary-500" />
+          <Spinner className="text-primary-500 dark:text-primary-400" />
         </div>
       )}
 
       {!isBusy && data?.items.length === 0 && <EmptyState title="Kayıt bulunamadı" />}
 
       {!isBusy && data && data.items.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-zinc-100">
+        <div className="overflow-hidden rounded-xl border border-zinc-100 dark:border-zinc-800">
           <table className="w-full text-sm">
-            <thead className="bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <thead className="bg-zinc-50 dark:bg-zinc-800 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="px-4 py-3">Kullanıcı</th>
                 <th className="px-4 py-3">Aksiyon</th>
@@ -114,17 +114,17 @@ export function AuditLogTable() {
                 <th className="px-4 py-3">Tarih</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
               {data.items.map((log) => (
                 <tr key={log.id}>
-                  <td className="px-4 py-3 font-medium text-zinc-900">{log.userDisplayName}</td>
+                  <td className="px-4 py-3 font-medium text-zinc-900 dark:text-zinc-100">{log.userDisplayName}</td>
                   <td className="px-4 py-3">
                     <Badge variant="primary">{actionLabels[log.action]}</Badge>
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">
+                  <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">
                     {resourceTypeLabels[log.resourceType]} · {log.resourceId.slice(0, 8)}
                   </td>
-                  <td className="px-4 py-3 text-zinc-500">{format(new Date(log.timestamp), "d MMM yyyy HH:mm", { locale: tr })}</td>
+                  <td className="px-4 py-3 text-zinc-500 dark:text-zinc-400">{format(new Date(log.timestamp), "d MMM yyyy HH:mm", { locale: tr })}</td>
                 </tr>
               ))}
             </tbody>
@@ -137,7 +137,7 @@ export function AuditLogTable() {
           <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((prev) => prev - 1)}>
             Önceki
           </Button>
-          <span className="text-xs text-zinc-500">
+          <span className="text-xs text-zinc-500 dark:text-zinc-400">
             {page} / {totalPages}
           </span>
           <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((prev) => prev + 1)}>

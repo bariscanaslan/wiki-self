@@ -112,10 +112,10 @@ export function DocumentPage({ documentId }: { documentId: string }) {
           <input
             value={title}
             onChange={(event) => setTitle(event.target.value)}
-            className="w-full border-b-2 border-transparent bg-transparent text-2xl font-bold text-zinc-900 focus:border-primary-400 focus:outline-none"
+            className="w-full border-b-2 border-transparent bg-transparent text-2xl font-bold text-zinc-900 dark:text-zinc-100 focus:border-primary-400 focus:outline-none"
           />
         ) : (
-          <h1 className="text-2xl font-bold text-zinc-900">{document.title}</h1>
+          <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">{document.title}</h1>
         )}
 
         <div className="flex shrink-0 gap-2">
@@ -147,13 +147,13 @@ export function DocumentPage({ documentId }: { documentId: string }) {
           )}
           {manageable && !isEditing && (
             <Button variant="ghost" onClick={() => setIsDeleteOpen(true)} aria-label="Dokümanı sil">
-              <Trash2 size={16} className="text-red-500" />
+              <Trash2 size={16} className="text-red-500 dark:text-red-400" />
             </Button>
           )}
         </div>
       </div>
 
-      {folderPath && <p className="-mt-4 mb-6 truncate text-sm text-zinc-400">{folderPath}/{document.title}</p>}
+      {folderPath && <p className="-mt-4 mb-6 truncate text-sm text-zinc-400 dark:text-zinc-500">{folderPath}/{document.title}</p>}
 
       {!isEditing && (
         <div className="mb-6 flex flex-wrap items-center gap-3">

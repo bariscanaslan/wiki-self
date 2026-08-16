@@ -49,8 +49,8 @@ export function CreateUserModal({ isOpen, onClose }: { isOpen: boolean; onClose:
         <Input label="Ad Soyad" error={errors.displayName?.message} {...register("displayName")} />
         <Input label="E-posta" type="email" error={errors.email?.message} {...register("email")} />
         <PasswordInput label="Şifre" error={errors.password?.message} {...register("password")} />
-        <label className="flex items-center gap-2 text-sm text-zinc-700">
-          <input type="checkbox" className="h-4 w-4 rounded border-zinc-300 text-primary-600 focus:ring-primary-400" {...register("isAdmin")} />
+        <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
+          <input type="checkbox" className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-primary-600 dark:text-primary-400 focus:ring-primary-400" {...register("isAdmin")} />
           Yönetici yetkisi ver
         </label>
         <div className="flex justify-end gap-3">

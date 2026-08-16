@@ -66,19 +66,19 @@ export function PermissionsManager() {
 
   return (
     <div className="grid gap-6 lg:grid-cols-[18rem_1fr]">
-      <div className="max-h-[36rem] overflow-y-auto rounded-xl border border-zinc-100 p-3">
-        {isTreeLoading && <Spinner className="mx-auto mt-6 text-primary-500" />}
+      <div className="max-h-[36rem] overflow-y-auto rounded-xl border border-zinc-100 dark:border-zinc-800 p-3">
+        {isTreeLoading && <Spinner className="mx-auto mt-6 text-primary-500 dark:text-primary-400" />}
         {tree && <PermissionResourcePicker nodes={tree} selected={selectedResource} onSelect={setSelectedResource} />}
       </div>
 
       <div>
-        {!selectedResource && <p className="text-sm text-zinc-400">İzinlerini yönetmek için soldan bir klasör veya doküman seçin.</p>}
+        {!selectedResource && <p className="text-sm text-zinc-400 dark:text-zinc-500">İzinlerini yönetmek için soldan bir klasör veya doküman seçin.</p>}
 
         {selectedResource && (
           <div>
-            <h2 className="mb-4 text-lg font-semibold text-zinc-900">{selectedResource.label}</h2>
+            <h2 className="mb-4 text-lg font-semibold text-zinc-900 dark:text-zinc-100">{selectedResource.label}</h2>
 
-            <div className="mb-6 flex flex-wrap items-end gap-3 rounded-xl border border-zinc-100 bg-zinc-50/50 p-4">
+            <div className="mb-6 flex flex-wrap items-end gap-3 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-800/50 p-4">
               <Select label="Grup" value={selectedGroupId} onChange={(event) => setSelectedGroupId(event.target.value)} className="w-56">
                 <option value="">Grup seçin</option>
                 {groups?.map((group) => (
@@ -97,21 +97,21 @@ export function PermissionsManager() {
               </Button>
             </div>
 
-            {isPermissionsLoading && <Spinner className="text-primary-500" />}
+            {isPermissionsLoading && <Spinner className="text-primary-500 dark:text-primary-400" />}
 
             <div className="flex flex-col gap-2">
               {permissions?.map((permission) => (
-                <div key={permission.id} className="flex items-center justify-between rounded-lg border border-zinc-100 px-4 py-2.5">
+                <div key={permission.id} className="flex items-center justify-between rounded-lg border border-zinc-100 dark:border-zinc-800 px-4 py-2.5">
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-medium text-zinc-900">{permission.groupName}</span>
+                    <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{permission.groupName}</span>
                     <Badge variant="primary">{levelLabels[permission.level]}</Badge>
                   </div>
-                  <button type="button" onClick={() => handleRemove(permission.id)} className="text-zinc-400 hover:text-red-500" aria-label="İzni kaldır">
+                  <button type="button" onClick={() => handleRemove(permission.id)} className="text-zinc-400 dark:text-zinc-500 hover:text-red-500 dark:hover:text-red-400" aria-label="İzni kaldır">
                     <Trash2 size={15} />
                   </button>
                 </div>
               ))}
-              {permissions && permissions.length === 0 && <p className="text-sm text-zinc-400">Bu kaynak için henüz izin tanımlanmamış.</p>}
+              {permissions && permissions.length === 0 && <p className="text-sm text-zinc-400 dark:text-zinc-500">Bu kaynak için henüz izin tanımlanmamış.</p>}
             </div>
           </div>
         )}

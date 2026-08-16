@@ -40,7 +40,7 @@ export function Sidebar({ isCollapsed, isMobileOpen, onMobileClose }: SidebarPro
     <>
       {!isCollapsed && (
         <aside
-          className="relative hidden shrink-0 overflow-y-auto border-r border-zinc-100 bg-white px-2 py-4 md:block"
+          className="relative hidden shrink-0 overflow-y-auto border-r border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2 py-4 md:block"
           style={{ width }}
         >
           <SidebarContent />
@@ -49,7 +49,7 @@ export function Sidebar({ isCollapsed, isMobileOpen, onMobileClose }: SidebarPro
             aria-orientation="vertical"
             aria-label="Kenar çubuğu genişliğini ayarla"
             onPointerDown={startResize}
-            className="absolute right-0 top-0 z-10 hidden h-full w-1 cursor-col-resize touch-none hover:bg-primary-300 md:block"
+            className="absolute right-0 top-0 z-10 hidden h-full w-1 cursor-col-resize touch-none hover:bg-primary-300 dark:hover:bg-primary-700 md:block"
           />
         </aside>
       )}
@@ -65,7 +65,7 @@ export function Sidebar({ isCollapsed, isMobileOpen, onMobileClose }: SidebarPro
           />
           <aside
             id="mobile-sidebar"
-            className="relative z-10 h-full w-72 max-w-[85vw] overflow-y-auto border-r border-zinc-100 bg-white px-2 py-4 shadow-xl"
+            className="relative z-10 h-full w-72 max-w-[85vw] overflow-y-auto border-r border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-2 py-4 shadow-xl"
             aria-label="Ana menü"
             onClick={(event) => {
               if ((event.target as HTMLElement).closest("a")) {

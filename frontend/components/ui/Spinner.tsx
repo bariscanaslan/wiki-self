@@ -19,8 +19,8 @@ export function Spinner({ className, size = 20 }: { className?: string; size?: n
 
 export function FullPageSpinner() {
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-white">
-      <Spinner size={32} className="text-primary-600" />
+    <div className="flex h-screen w-full items-center justify-center bg-white dark:bg-zinc-900">
+      <Spinner size={32} className="text-primary-600 dark:text-primary-400" />
     </div>
   );
 }

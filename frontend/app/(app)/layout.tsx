@@ -61,7 +61,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-white">
+    <div className="flex h-screen flex-col overflow-hidden bg-white dark:bg-zinc-900">
       <Header
         isMobileSidebarOpen={isMobileSidebarOpen}
         onMobileSidebarToggle={() => setIsMobileSidebarOpen((isOpen) => !isOpen)}
@@ -74,7 +74,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
           isMobileOpen={isMobileSidebarOpen}
           onMobileClose={() => setIsMobileSidebarOpen(false)}
         />
-        <main inert={isMobileSidebarOpen} className="flex-1 overflow-y-auto bg-zinc-50/50">
+        <main inert={isMobileSidebarOpen} className="flex-1 overflow-y-auto bg-zinc-50/50 dark:bg-zinc-800/50">
           {children}
         </main>
       </div>

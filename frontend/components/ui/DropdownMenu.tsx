@@ -79,7 +79,7 @@ export function DropdownMenu({ trigger, children, align = "right", className }: 
                 transition={{ duration: 0.14, ease: "easeOut" }}
                 onClick={() => setIsOpen(false)}
                 style={{ position: "fixed", top: position.top, left: position.left, right: position.right }}
-                className={cn("z-50 min-w-[12rem] rounded-xl border border-zinc-200 bg-white p-1.5 shadow-lg", className)}
+                className={cn("z-50 min-w-[12rem] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1.5 shadow-lg", className)}
               >
                 {children}
               </motion.div>
@@ -106,7 +106,7 @@ export function DropdownItem({
 }) {
   const itemClassName = cn(
     "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-40",
-    danger ? "text-red-600 hover:bg-red-50" : "text-zinc-700 hover:bg-zinc-100",
+    danger ? "text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10" : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800",
   );
 
   if (href) {

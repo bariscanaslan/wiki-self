@@ -46,16 +46,16 @@ export function UsersTable() {
 
       {isLoading && (
         <div className="flex justify-center py-16">
-          <Spinner className="text-primary-500" />
+          <Spinner className="text-primary-500 dark:text-primary-400" />
         </div>
       )}
 
       {!isLoading && users?.length === 0 && <EmptyState icon={UsersIcon} title="Henüz kullanıcı yok" />}
 
       {!isLoading && users && users.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-zinc-100">
+        <div className="overflow-hidden rounded-xl border border-zinc-100 dark:border-zinc-800">
           <table className="w-full text-sm">
-            <thead className="bg-zinc-50 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500">
+            <thead className="bg-zinc-50 dark:bg-zinc-800 text-left text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
               <tr>
                 <th className="px-4 py-3">Kullanıcı</th>
                 <th className="px-4 py-3">Gruplar</th>
@@ -63,11 +63,11 @@ export function UsersTable() {
                 <th className="px-4 py-3 text-right">İşlemler</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100">
+            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
               {users.map((user) => (
-                <tr key={user.id} className="transition-colors hover:bg-zinc-50/60">
+                <tr key={user.id} className="transition-colors hover:bg-zinc-50/60 dark:hover:bg-zinc-800/60">
                   <td className="px-4 py-3">
-                    <div className="font-medium text-zinc-900">
+                    <div className="font-medium text-zinc-900 dark:text-zinc-100">
                       {user.displayName}{" "}
                       {user.isAdmin && (
                         <Badge variant="primary" className="ml-1">
@@ -75,7 +75,7 @@ export function UsersTable() {
                         </Badge>
                       )}
                     </div>
-                    <div className="text-xs text-zinc-500">{user.email}</div>
+                    <div className="text-xs text-zinc-500 dark:text-zinc-400">{user.email}</div>
                   </td>
                   <td className="px-4 py-3">
                     <div className="flex flex-wrap gap-1">
@@ -101,7 +101,7 @@ export function UsersTable() {
                         Düzenle
                       </Button>
                       <Button variant="ghost" size="sm" disabled={user.id === currentUser?.id} onClick={() => setDeleteTarget(user)} aria-label="Sil">
-                        <Trash2 size={14} className="text-red-500" />
+                        <Trash2 size={14} className="text-red-500 dark:text-red-400" />
                       </Button>
                     </div>
                   </td>

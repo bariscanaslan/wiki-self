@@ -16,11 +16,11 @@ interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  primary: "bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-300 shadow-sm",
-  secondary: "bg-zinc-100 text-zinc-900 hover:bg-zinc-200 focus-visible:ring-zinc-300",
-  ghost: "bg-transparent text-zinc-700 hover:bg-zinc-100 focus-visible:ring-zinc-300",
-  danger: "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-300 shadow-sm",
-  outline: "bg-white text-zinc-900 border border-zinc-300 hover:border-primary-400 hover:text-primary-700 focus-visible:ring-primary-200",
+  primary: "bg-primary-600 text-white hover:bg-primary-700 focus-visible:ring-primary-300 dark:focus-visible:ring-primary-700 shadow-sm",
+  secondary: "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 hover:bg-zinc-200 dark:hover:bg-zinc-700 focus-visible:ring-zinc-300 dark:focus-visible:ring-zinc-600",
+  ghost: "bg-transparent text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 focus-visible:ring-zinc-300 dark:focus-visible:ring-zinc-600",
+  danger: "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-300 dark:focus-visible:ring-red-700 shadow-sm",
+  outline: "bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-700 hover:border-primary-400 hover:text-primary-700 dark:hover:text-primary-400 focus-visible:ring-primary-200 dark:focus-visible:ring-primary-800",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

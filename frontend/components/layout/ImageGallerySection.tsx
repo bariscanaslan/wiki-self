@@ -40,21 +40,21 @@ export function ImageGallerySection() {
   }
 
   return (
-    <div className="mt-4 flex flex-col gap-1 border-t border-zinc-100 pt-4">
+    <div className="mt-4 flex flex-col gap-1 border-t border-zinc-100 dark:border-zinc-800 pt-4">
       <button
         type="button"
         onClick={() => setIsExpanded((prev) => !prev)}
         className="flex w-full items-center justify-between px-2 pb-2 text-left"
       >
-        <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Görseller</span>
-        <ChevronRight size={14} className={cn("text-zinc-400 transition-transform", isExpanded && "rotate-90")} />
+        <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">Görseller</span>
+        <ChevronRight size={14} className={cn("text-zinc-400 dark:text-zinc-500 transition-transform", isExpanded && "rotate-90")} />
       </button>
 
       {isExpanded && (
         <div className="flex flex-col gap-3 px-2">
           {isLoading && (
             <div className="flex justify-center py-4">
-              <Spinner className="text-primary-500" size={16} />
+              <Spinner className="text-primary-500 dark:text-primary-400" size={16} />
             </div>
           )}
 
@@ -65,7 +65,7 @@ export function ImageGallerySection() {
           {images.length > 0 && (
             <div className="grid grid-cols-3 gap-1.5">
               {images.map((image) => (
-                <div key={image.id} className="group relative aspect-square overflow-hidden rounded-lg border border-zinc-100 bg-zinc-50">
+                <div key={image.id} className="group relative aspect-square overflow-hidden rounded-lg border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800">
                   <Link href={`/documents/${image.documentId}`} title={image.documentTitle} className="block h-full w-full">
                     <img
                       src={resolveAssetUrl(image.url) ?? undefined}
@@ -97,7 +97,7 @@ export function ImageGallerySection() {
               type="button"
               onClick={() => setLimit((prev) => prev + PAGE_SIZE)}
               disabled={isFetching}
-              className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-200 px-2 py-2 text-xs font-medium text-zinc-500 transition-colors hover:border-primary-300 hover:bg-zinc-50 hover:text-primary-700 disabled:opacity-50"
+              className="flex items-center justify-center gap-2 rounded-lg border border-dashed border-zinc-200 dark:border-zinc-800 px-2 py-2 text-xs font-medium text-zinc-500 dark:text-zinc-400 transition-colors hover:border-primary-300 dark:hover:border-primary-700 hover:bg-zinc-50 dark:hover:bg-zinc-800 hover:text-primary-700 dark:hover:text-primary-400 disabled:opacity-50"
             >
               {isFetching ? <Spinner size={14} /> : <ImageIcon size={14} />}
               Daha fazla yükle

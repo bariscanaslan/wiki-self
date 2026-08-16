@@ -42,12 +42,12 @@ export function ChangePasswordSettings() {
   }
 
   return (
-    <div className="rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
       <div className="mb-1 flex items-center gap-2">
-        <KeyRound size={20} className="text-primary-600" />
-        <h2 className="text-lg font-semibold text-zinc-900">Şifre</h2>
+        <KeyRound size={20} className="text-primary-600 dark:text-primary-400" />
+        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Şifre</h2>
       </div>
-      <p className="mb-5 text-sm text-zinc-500">Hesabınızın şifresini değiştirin.</p>
+      <p className="mb-5 text-sm text-zinc-500 dark:text-zinc-400">Hesabınızın şifresini değiştirin.</p>
 
       <Button onClick={() => setIsOpen(true)}>Şifreyi Değiştir</Button>
 

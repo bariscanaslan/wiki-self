@@ -43,21 +43,21 @@ export function TagFilterSection() {
   }
 
   return (
-    <div className="mt-4 flex flex-col gap-1 border-t border-zinc-100 pt-4">
+    <div className="mt-4 flex flex-col gap-1 border-t border-zinc-100 dark:border-zinc-800 pt-4">
       <button
         type="button"
         onClick={() => setIsExpanded((prev) => !prev)}
         className="flex w-full items-center justify-between px-2 pb-2 text-left"
       >
-        <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Etiketler</span>
-        <ChevronRight size={14} className={cn("text-zinc-400 transition-transform", isExpanded && "rotate-90")} />
+        <span className="text-xs font-semibold uppercase tracking-wide text-zinc-400 dark:text-zinc-500">Etiketler</span>
+        <ChevronRight size={14} className={cn("text-zinc-400 dark:text-zinc-500 transition-transform", isExpanded && "rotate-90")} />
       </button>
 
       {isExpanded && (
         <div className="flex flex-col gap-1">
           {isLoading && (
             <div className="flex justify-center py-4">
-              <Spinner className="text-primary-500" size={16} />
+              <Spinner className="text-primary-500 dark:text-primary-400" size={16} />
             </div>
           )}
 
@@ -72,18 +72,18 @@ export function TagFilterSection() {
                 key={tag.id}
                 className={cn(
                   "group flex items-center gap-1 rounded-lg pr-1 text-sm transition-colors",
-                  isActive ? "bg-primary-50 text-primary-700" : "text-zinc-700 hover:bg-zinc-100",
+                  isActive ? "bg-primary-50 dark:bg-primary-500/10 text-primary-700 dark:text-primary-400" : "text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800",
                 )}
               >
                 <Link href={`/search?tagId=${tag.id}`} className="flex flex-1 items-center gap-2 truncate px-2 py-1.5">
-                  <TagIcon size={14} className={cn("shrink-0", isActive ? "text-primary-500" : "text-zinc-400")} />
+                  <TagIcon size={14} className={cn("shrink-0", isActive ? "text-primary-500 dark:text-primary-400" : "text-zinc-400 dark:text-zinc-500")} />
                   <span className="truncate">{tag.name}</span>
                 </Link>
                 {user?.isAdmin && (
                   <button
                     type="button"
                     onClick={() => setPendingDelete(tag)}
-                    className="rounded p-1 text-zinc-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-600 group-hover:opacity-100"
+                    className="rounded p-1 text-zinc-400 dark:text-zinc-500 opacity-0 transition-opacity hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-400 group-hover:opacity-100"
                     aria-label="Etiketi sil"
                   >
                     <Trash2 size={14} />

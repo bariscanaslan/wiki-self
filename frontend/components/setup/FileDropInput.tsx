@@ -36,7 +36,7 @@ export function FileDropInput({ label, value, onChange, accept = "image/*", exis
 
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-sm font-medium text-zinc-700">{label}</span>
+      <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">{label}</span>
       <div
         onDragOver={(event) => {
           event.preventDefault();
@@ -51,7 +51,7 @@ export function FileDropInput({ label, value, onChange, accept = "image/*", exis
         onClick={() => inputRef.current?.click()}
         className={cn(
           "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors",
-          isDragging ? "border-primary-500 bg-primary-50" : "border-zinc-200 hover:border-primary-300 hover:bg-zinc-50",
+          isDragging ? "border-primary-500 bg-primary-50 dark:bg-primary-500/10" : "border-zinc-200 dark:border-zinc-800 hover:border-primary-300 dark:hover:border-primary-700 hover:bg-zinc-50 dark:hover:bg-zinc-800",
         )}
       >
         {previewUrl ? (
@@ -71,8 +71,8 @@ export function FileDropInput({ label, value, onChange, accept = "image/*", exis
           </div>
         ) : (
           <>
-            <Upload size={20} className="text-zinc-400" />
-            <p className="text-xs text-zinc-500">Yüklemek için tıklayın veya dosyayı sürükleyin</p>
+            <Upload size={20} className="text-zinc-400 dark:text-zinc-500" />
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">Yüklemek için tıklayın veya dosyayı sürükleyin</p>
           </>
         )}
       </div>

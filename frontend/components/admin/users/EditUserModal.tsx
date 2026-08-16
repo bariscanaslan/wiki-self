@@ -42,12 +42,12 @@ export function EditUserModal({ user, onClose }: { user: UserResponse | null; on
     <Modal isOpen={Boolean(user)} onClose={onClose} title="Kullanıcıyı Düzenle" size="sm">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <Input label="Ad Soyad" value={displayName} onChange={(event) => setDisplayName(event.target.value)} />
-        <label className="flex items-center gap-2 text-sm text-zinc-700">
+        <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
           <input
             type="checkbox"
             checked={isAdmin}
             onChange={(event) => setIsAdmin(event.target.checked)}
-            className="h-4 w-4 rounded border-zinc-300 text-primary-600 focus:ring-primary-400"
+            className="h-4 w-4 rounded border-zinc-300 dark:border-zinc-700 text-primary-600 dark:text-primary-400 focus:ring-primary-400"
           />
           Yönetici yetkisi
         </label>

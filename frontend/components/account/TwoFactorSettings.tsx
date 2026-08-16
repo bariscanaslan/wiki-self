@@ -91,12 +91,12 @@ export function TwoFactorSettings() {
   const isEnabled = user?.twoFactorEnabled ?? false;
 
   return (
-    <div className="rounded-2xl border border-zinc-100 bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-zinc-100 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm">
       <div className="mb-1 flex items-center gap-2">
-        {isEnabled ? <ShieldCheck size={20} className="text-primary-600" /> : <ShieldOff size={20} className="text-zinc-400" />}
-        <h2 className="text-lg font-semibold text-zinc-900">İki Faktörlü Doğrulama</h2>
+        {isEnabled ? <ShieldCheck size={20} className="text-primary-600 dark:text-primary-400" /> : <ShieldOff size={20} className="text-zinc-400 dark:text-zinc-500" />}
+        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">İki Faktörlü Doğrulama</h2>
       </div>
-      <p className="mb-5 text-sm text-zinc-500">
+      <p className="mb-5 text-sm text-zinc-500 dark:text-zinc-400">
         Etkinleştirildiğinde, şifrenizin yanı sıra bir authenticator uygulamasından (Google Authenticator, Authy vb.) alınan
         kodu da girmeniz gerekir.
       </p>
@@ -114,14 +114,14 @@ export function TwoFactorSettings() {
 
       {step === "setup" && setupData && (
         <form onSubmit={handleConfirmSetup} className="flex flex-col gap-4">
-          <div className="flex flex-col items-center gap-3 rounded-xl border border-zinc-100 bg-zinc-50 p-4">
+          <div className="flex flex-col items-center gap-3 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 p-4">
             <img
               src={`data:image/png;base64,${setupData.qrCodeImageBase64}`}
               alt="İki faktörlü doğrulama QR kodu"
               className="h-40 w-40"
             />
-            <p className="text-center text-xs text-zinc-500">QR kodu authenticator uygulamanızla tarayın, ya da bu kodu elle girin:</p>
-            <code className="select-all rounded bg-white px-2 py-1 font-mono text-xs text-zinc-700">{setupData.secret}</code>
+            <p className="text-center text-xs text-zinc-500 dark:text-zinc-400">QR kodu authenticator uygulamanızla tarayın, ya da bu kodu elle girin:</p>
+            <code className="select-all rounded bg-white dark:bg-zinc-900 px-2 py-1 font-mono text-xs text-zinc-700 dark:text-zinc-300">{setupData.secret}</code>
           </div>
 
           <Input label="Doğrulama Kodu" placeholder="123456" autoFocus value={code} onChange={(event) => setCode(event.target.value)} />
@@ -139,11 +139,11 @@ export function TwoFactorSettings() {
 
       {step === "recoveryCodes" && (
         <div className="flex flex-col gap-4">
-          <p className="text-sm text-zinc-600">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
             Bu kurtarma kodlarını güvenli bir yerde saklayın. Authenticator uygulamanıza erişemediğinizde her biri bir kez
             kullanılabilir. Bu kodlar tekrar gösterilmeyecek.
           </p>
-          <div className="grid grid-cols-2 gap-2 rounded-xl border border-zinc-100 bg-zinc-50 p-4 font-mono text-sm text-zinc-700">
+          <div className="grid grid-cols-2 gap-2 rounded-xl border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 p-4 font-mono text-sm text-zinc-700 dark:text-zinc-300">
             {recoveryCodes.map((recoveryCode) => (
               <span key={recoveryCode}>{recoveryCode}</span>
             ))}
@@ -161,7 +161,7 @@ export function TwoFactorSettings() {
 
       <Modal isOpen={isDisableOpen} onClose={() => setIsDisableOpen(false)} title="İki Faktörlü Doğrulamayı Devre Dışı Bırak" size="sm">
         <form onSubmit={handleDisable} className="flex flex-col gap-4">
-          <p className="text-sm text-zinc-600">Devam etmek için şifrenizi girin.</p>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">Devam etmek için şifrenizi girin.</p>
           <PasswordInput label="Şifre" autoFocus value={disablePassword} onChange={(event) => setDisablePassword(event.target.value)} />
           <div className="flex justify-end gap-3">
             <Button type="button" variant="ghost" onClick={() => setIsDisableOpen(false)}>

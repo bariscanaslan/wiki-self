@@ -91,7 +91,7 @@ export function ContextMenu({ point, onClose, children, className }: ContextMenu
           left: position?.left ?? point.x,
           visibility: position ? "visible" : "hidden",
         }}
-        className={cn("z-50 min-w-[12rem] rounded-xl border border-zinc-200 bg-white p-1.5 shadow-lg", className)}
+        className={cn("z-50 min-w-[12rem] rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1.5 shadow-lg", className)}
       >
         {children}
       </motion.div>

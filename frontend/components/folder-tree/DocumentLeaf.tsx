@@ -68,11 +68,11 @@ export function DocumentLeaf({ document, depth }: { document: DocumentSummary; d
         onContextMenu={handleContextMenu}
         style={{ paddingLeft: `${depth * 16 + 28}px` }}
         className={cn(
-          "flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-zinc-100",
-          isActive ? "bg-primary-50 font-medium text-primary-700" : "text-zinc-600",
+          "flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800",
+          isActive ? "bg-primary-50 dark:bg-primary-500/10 font-medium text-primary-700 dark:text-primary-400" : "text-zinc-600 dark:text-zinc-400",
         )}
       >
-        <FileText size={14} className="shrink-0 text-zinc-400" />
+        <FileText size={14} className="shrink-0 text-zinc-400 dark:text-zinc-500" />
         <span className="truncate">{document.title}</span>
       </Link>
 

@@ -32,15 +32,15 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-8">
-      <h1 className="mb-6 text-2xl font-bold text-zinc-900">Yönetim</h1>
-      <div className="mb-8 flex gap-1 overflow-x-auto border-b border-zinc-100">
+      <h1 className="mb-6 text-2xl font-bold text-zinc-900 dark:text-zinc-100">Yönetim</h1>
+      <div className="mb-8 flex gap-1 overflow-x-auto border-b border-zinc-100 dark:border-zinc-800">
         {navItems.map((item) => (
           <Link
             key={item.href}
             href={item.href}
             className={cn(
               "shrink-0 border-b-2 px-4 py-2.5 text-sm font-medium transition-colors",
-              pathname.startsWith(item.href) ? "border-primary-600 text-primary-700" : "border-transparent text-zinc-500 hover:text-zinc-800",
+              pathname.startsWith(item.href) ? "border-primary-600 dark:border-primary-500 text-primary-700 dark:text-primary-400" : "border-transparent text-zinc-500 dark:text-zinc-400 hover:text-zinc-800 dark:hover:text-zinc-200",
             )}
           >
             {item.label}

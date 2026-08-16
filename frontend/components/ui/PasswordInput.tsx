@@ -16,7 +16,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     return (
       <div className="flex flex-col gap-1.5">
         {label && (
-          <label htmlFor={inputId} className="text-sm font-medium text-zinc-700">
+          <label htmlFor={inputId} className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
             {label}
           </label>
         )}
@@ -26,9 +26,9 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             id={inputId}
             type={isVisible ? "text" : "password"}
             className={cn(
-              "w-full rounded-lg border border-zinc-300 bg-white px-3.5 py-2.5 pr-10 text-sm text-zinc-900 placeholder:text-zinc-400 transition-colors",
-              "focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100",
-              error && "border-red-400 focus:border-red-500 focus:ring-red-100",
+              "w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3.5 py-2.5 pr-10 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 dark:placeholder:text-zinc-500 transition-colors",
+              "focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-100 dark:focus:ring-primary-900/40",
+              error && "border-red-400 focus:border-red-500 focus:ring-red-100 dark:focus:ring-red-900/40",
               className,
             )}
             {...props}
@@ -37,14 +37,14 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
             type="button"
             onClick={() => setIsVisible((prev) => !prev)}
             tabIndex={-1}
-            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 transition-colors hover:text-zinc-600"
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500 transition-colors hover:text-zinc-600 dark:hover:text-zinc-400"
             aria-label={isVisible ? "Şifreyi gizle" : "Şifreyi göster"}
           >
             {isVisible ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
         </div>
-        {hint && !error && <p className="text-xs text-zinc-500">{hint}</p>}
-        {error && <p className="text-xs text-red-600">{error}</p>}
+        {hint && !error && <p className="text-xs text-zinc-500 dark:text-zinc-400">{hint}</p>}
+        {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
       </div>
     );
   },

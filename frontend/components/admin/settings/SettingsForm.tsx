@@ -46,7 +46,7 @@ export function SettingsForm() {
   if (isLoading || !settings) {
     return (
       <div className="flex justify-center py-16">
-        <Spinner className="text-primary-500" />
+        <Spinner className="text-primary-500 dark:text-primary-400" />
       </div>
     );
   }

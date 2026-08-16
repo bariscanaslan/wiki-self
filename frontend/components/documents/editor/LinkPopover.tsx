@@ -48,21 +48,21 @@ export function LinkPopover({ editor, disabled }: { editor: Editor; disabled?: b
         title="Bağlantı"
         aria-label="Bağlantı"
         className={cn(
-          "flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900 disabled:cursor-not-allowed disabled:opacity-30",
-          editor.isActive("link") && "bg-primary-50 text-primary-600",
+          "flex h-8 w-8 items-center justify-center rounded-md text-zinc-500 dark:text-zinc-400 transition-colors hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-30",
+          editor.isActive("link") && "bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400",
         )}
       >
         <Link2 size={16} />
       </button>
       {isOpen && (
-        <div className="absolute left-0 top-full z-20 mt-2 flex w-64 gap-2 rounded-lg border border-zinc-200 bg-white p-2 shadow-lg">
+        <div className="absolute left-0 top-full z-20 mt-2 flex w-64 gap-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 shadow-lg">
           <input
             autoFocus
             value={url}
             onChange={(event) => setUrl(event.target.value)}
             onKeyDown={(event) => event.key === "Enter" && applyLink()}
             placeholder="https://..."
-            className="flex-1 rounded-md border border-zinc-200 px-2 py-1 text-xs focus:border-primary-400 focus:outline-none"
+            className="flex-1 rounded-md border border-zinc-200 dark:border-zinc-800 px-2 py-1 text-xs focus:border-primary-400 focus:outline-none"
           />
           <button
             type="button"

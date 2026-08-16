@@ -170,7 +170,7 @@ export const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorPro
         onImageSelect={uploadAndInsertImage}
         isUploadingImage={uploadAsset.isPending}
       />
-      <div className="rounded-b-xl border border-zinc-200 bg-white px-4 py-4">
+      <div className="rounded-b-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-4">
         {mode === "wysiwyg" ? (
           <EditorContent editor={editor} />
         ) : (
@@ -183,10 +183,10 @@ export const DocumentEditor = forwardRef<DocumentEditorHandle, DocumentEditorPro
               onPaste={handleTextareaPaste}
               onDragOver={handleTextareaDragOver}
               onDrop={handleTextareaDrop}
-              className="min-h-[320px] w-full resize-y rounded-lg border border-zinc-100 bg-zinc-50 p-3 font-mono text-sm text-zinc-800 outline-none"
+              className="min-h-[320px] w-full resize-y rounded-lg border border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-800 p-3 font-mono text-sm text-zinc-800 dark:text-zinc-200 outline-none"
               placeholder="Markdown içeriği... (görsel yapıştırabilir veya sürükleyip bırakabilirsiniz)"
             />
-            <div className="min-h-[320px] overflow-y-auto rounded-lg border border-zinc-100 p-3">
+            <div className="min-h-[320px] overflow-y-auto rounded-lg border border-zinc-100 dark:border-zinc-800 p-3">
               <EditorContent editor={previewEditor} />
             </div>
           </div>

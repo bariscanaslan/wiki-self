@@ -17,11 +17,11 @@ export default function DashboardHomePage() {
         transition={{ duration: 0.3 }}
         className="flex max-w-md flex-col items-center text-center"
       >
-        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 text-primary-600">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400">
           <BookOpen size={26} />
         </div>
-        <h1 className="text-xl font-bold text-zinc-900">Hoş geldin, {user?.displayName}</h1>
-        <p className="mt-2 text-sm text-zinc-500">
+        <h1 className="text-xl font-bold text-zinc-900 dark:text-zinc-100">Hoş geldin, {user?.displayName}</h1>
+        <p className="mt-2 text-sm text-zinc-500 dark:text-zinc-400">
           {settings?.siteTitle || settings?.companyName || "WikiSelf"} dokümantasyon alanına hoş geldin. Başlamak için soldaki klasör
           ağacından bir doküman seç ya da yeni bir tane oluştur.
         </p>

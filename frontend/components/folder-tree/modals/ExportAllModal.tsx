@@ -104,7 +104,7 @@ export function ExportAllModal({ isOpen, onClose }: ExportAllModalProps) {
               </Button>
             ))}
           </div>
-          <p className="text-sm text-zinc-600">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
             Tüm klasörler ve içerdikleri dokümanlar {FORMAT_LABELS[format]} olarak, klasör yapısı korunarak bir .zip dosyasında
             indirilecek. Devam etmek için şifrenizi girin.
           </p>
@@ -129,14 +129,14 @@ export function ExportAllModal({ isOpen, onClose }: ExportAllModalProps) {
 
       {phase === "exporting" && (
         <div className="flex flex-col gap-4">
-          <p className="text-sm text-zinc-600">Dokümanlar {FORMAT_LABELS[format]} olarak hazırlanıyor, lütfen bekleyin...</p>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-100">
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">Dokümanlar {FORMAT_LABELS[format]} olarak hazırlanıyor, lütfen bekleyin...</p>
+          <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
             <div
               className="h-full rounded-full bg-primary-600 transition-all"
               style={{ width: progress.total > 0 ? `${(progress.done / progress.total) * 100}%` : "0%" }}
             />
           </div>
-          <p className="text-right text-xs text-zinc-500">
+          <p className="text-right text-xs text-zinc-500 dark:text-zinc-400">
             {progress.done} / {progress.total} doküman
           </p>
         </div>

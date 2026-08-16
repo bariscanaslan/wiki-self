@@ -34,9 +34,20 @@ export const metadata: Metadata = {
   },
 };
 
+// Keep the forced-light path check ("/login", "/setup") in sync with FORCED_LIGHT_PREFIXES in lib/theme/ThemeContext.tsx.
+const THEME_INIT_SCRIPT = `(function(){try{if(/^\\/(login|setup)(\\/|$)/.test(window.location.pathname))return;var s=localStorage.getItem('wikiself.theme');var d=s==='dark'||(s!=='light'&&window.matchMedia('(prefers-color-scheme: dark)').matches);if(d)document.documentElement.classList.add('dark');}catch(e){}})();`;
+
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="tr" className={`${inter.variable} ${roboto.variable} ${merriweather.variable} ${lora.variable} ${poppins.variable}`}>
+    <html
+      lang="tr"
+      suppressHydrationWarning
+      className={`${inter.variable} ${roboto.variable} ${merriweather.variable} ${lora.variable} ${poppins.variable}`}
+    >
+      <head>
+        {/* Applied before hydration so the correct theme paints on first frame instead of flashing light. */}
+        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
       </body>
